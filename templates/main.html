@@ -91,6 +91,7 @@
       transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
     }
 
+    /* HIDDEN BY DEFAULT */
     .sidebar.hidden {
       width: 0;
       opacity: 0;
@@ -256,8 +257,10 @@
   <div class="topbar">
     <button class="burger-btn" id="burgerBtn" aria-label="Toggle sidebar">☰</button>
   </div>
+
   <div class="container">
-    <div class="sidebar" id="sidebar">
+    <!-- SIDEBAR HIDDEN BY DEFAULT -->
+    <div class="sidebar hidden" id="sidebar">
       <div>
         <div class="logo-box">
           <span>CK</span> CottageKit
@@ -285,39 +288,32 @@
     <main class="main" id="mainContent">
       <h1>Smart Cottage Dashboard</h1>
       <div class="dashboard">
-    <!-- FAN -->
-    <div class="box" id="fanBox">
-      <div class="box-icon">🌀</div>
-      <div class="box-title">Fan</div>
-      <div class="status">Status: <span>OFF</span></div>
-
-    </div>
-
-    <!-- AIR PURIFIER -->
-    <div class="box" id="purifierBox">
-      <div class="box-icon">🌫️</div>
-      <div class="box-title">Air Purifier</div>
-      <div class="status">Status: <span>OFF</span></div>
-   
-    </div>
-
-    <!-- LIGHT -->
-    <div class="box" id="lightBox">
-      <div class="box-icon">💡</div>
-      <div class="box-title">Light</div>
-      <div class="status">Status: <span>OFF</span></div>
-    </div>
-
-    <!-- DOOR LOCK -->
-    <div class="box" id="doorBox">
-      <div class="box-icon">🚪</div>
-      <div class="box-title">Door Lock</div>
-      <div class="status">Status: <span>LOCKED</span></div>
-
-    </div>
+        <div class="box" id="fanBox">
+          <div class="box-icon">🌀</div>
+          <div class="box-title">Fan</div>
+          <div class="status">Status: <span>OFF</span></div>
+        </div>
+        <div class="box" id="purifierBox">
+          <div class="box-icon">🌫️</div>
+          <div class="box-title">Air Purifier</div>
+          <div class="status">Status: <span>OFF</span></div>
+        </div>
+        <div class="box" id="lightBox">
+          <div class="box-icon">💡</div>
+          <div class="box-title">Light</div>
+          <div class="status">Status: <span>OFF</span></div>
+        </div>
+        <div class="box" id="doorBox">
+          <div class="box-icon">🚪</div>
+          <div class="box-title">Door Lock</div>
+          <div class="status">Status: <span>LOCKED</span></div>
+        </div>
+      </div>
+    </main>
   </div>
 
 <script>
+  // Update time and date
   function updateDateTime() {
     const timeEl = document.getElementById("time");
     const dateEl = document.getElementById("date");
@@ -333,6 +329,7 @@
   setInterval(updateDateTime, 1000);
   updateDateTime();
 
+  // Sidebar toggle
   const burgerBtn = document.getElementById("burgerBtn");
   const sidebar = document.getElementById("sidebar");
 
@@ -340,6 +337,7 @@
     sidebar.classList.toggle("hidden");
   });
 
+  // Light/Dark mode toggle
   function toggleMode() {
     const body = document.body;
     const modeIcon = document.getElementById("modeIcon");
@@ -354,6 +352,7 @@
     }
   }
 
+  // Device toggle events
   document.addEventListener("DOMContentLoaded", function () {
     const fanBox = document.getElementById("fanBox");
     const lightBox = document.getElementById("lightBox");
@@ -384,7 +383,7 @@
     lightBox?.addEventListener("click", () => {
       const statusEl = lightBox.querySelector(".status span");
       const currentStatus = statusEl.textContent;
-           const newStatus = currentStatus === "ON" ? "off" : "on";
+      const newStatus = currentStatus === "ON" ? "off" : "on";
 
       fetch("/light", {
         method: "POST",
@@ -445,8 +444,5 @@
     });
   });
 </script>
-</main>
-</div>
 </body>
 </html>
-
