@@ -5,252 +5,281 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CottageKit Dashboard</title>
   <style>
-    :root {
-      --bg-color: #1e222e;
-      --card-color: rgba(28, 28, 28, 0.6);
-      --text-color: #ffffff;
-      --accent-color: #00ffc3;
-      --hover-shadow: rgba(0, 255, 195, 0.4);
-    }
+   :root {
+  --bg-color: #1e222e;
+  --card-color: rgba(28, 28, 28, 0.6);
+  --text-color: #ffffff;
+  --accent-color: #00ffc3;
+  --hover-shadow: rgba(0, 255, 195, 0.4);
+}
 
-    body.light {
-      --bg-color: #f0f0f0;
-      --card-color: rgba(200, 200, 200, 0.6);
-      --text-color: #1a1a1a;
-      --accent-color: #007965;
-      --hover-shadow: rgba(0, 121, 101, 0.3);
-    }
+body.light {
+  --bg-color: #f0f0f0;
+  --card-color: rgba(200, 200, 200, 0.6);
+  --text-color: #1a1a1a;
+  --accent-color: #007965;
+  --hover-shadow: rgba(0, 121, 101, 0.3);
+}
 
-    * {
-      box-sizing: border-box;
-      font-family: Verdana, sans-serif;
-      transition: all 0.3s ease;
-    }
+* {
+  box-sizing: border-box;
+  font-family: Verdana, sans-serif;
+  transition: all 0.3s ease;
+}
 
-    body {
-      margin: 0;
-      background: var(--bg-color);
-      color: var(--text-color);
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+body {
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: var(--card-color);
-      opacity: 0.85;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 0 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      z-index: 1000;
-    }
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: var(--card-color);
+  opacity: 0.85;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+}
 
-    .burger-btn {
-      font-size: 22px;
-      background: none;
-      border: none;
-      color: var(--text-color);
-      cursor: pointer;
-      user-select: none;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
+.burger-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
 
-    .burger-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+.burger-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
 
-    .container {
-      display: flex;
-      flex: 1;
-      height: calc(100vh - 60px);
-      margin-top: 60px;
-      overflow: hidden;
-    }
+.container {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
+  overflow: hidden;
+}
 
-    .sidebar {
-      width: 260px;
-      background: var(--card-color);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
-      backdrop-filter: blur(20px);
-      transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
-    }
+.sidebar {
+  width: 260px;
+  background: var(--card-color);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  backdrop-filter: blur(20px);
+  transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
 
-    /* HIDDEN BY DEFAULT */
-    .sidebar.hidden {
-      width: 0;
-      opacity: 0;
-      padding: 0;
-      overflow: hidden;
-    }
+/* HIDDEN BY DEFAULT */
+.sidebar.hidden {
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  overflow: hidden;
+}
 
-    .logo-box {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text-color);
-      width: fit-content;
-      margin-bottom: 25px;
-    }
+.logo-box {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  width: fit-content;
+  margin-bottom: 25px;
+}
 
-    .logo-box span {
-      background: var(--accent-color);
-      color: #000;
-      font-weight: bold;
-      padding: 6px 10px;
-      border-radius: 8px;
-      margin-right: 10px;
-    }
+.logo-box span {
+  background: var(--accent-color);
+  color: #000;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
 
-    .datetime-block {
-      margin-bottom: 30px;
-    }
+.datetime-block {
+  margin-bottom: 30px;
+}
 
-    .time {
-      font-size: 1.6rem;
-      font-weight: bold;
-    }
+.time {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
 
-    .date {
-      font-size: 0.9rem;
-      color: #ccc;
-    }
+.date {
+  font-size: 0.9rem;
+  color: #ccc;
+}
 
-    .search {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 25px;
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-color);
-    }
+.search {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 25px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-color);
+}
 
-    .search::placeholder {
-      color: #aaa;
-    }
+.search::placeholder {
+  color: #aaa;
+}
 
-    .nav-links {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    .nav-btn {
-      background: none;
-      border: none;
-      text-align: left;
-      padding: 10px 12px;
-      border-radius: 10px;
-      color: var(--text-color);
-      font-size: 0.95rem;
-      cursor: pointer;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+.nav-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
-    .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
 
-    .sidebar-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    .mode-toggle {
-      background: none;
-      border: none;
-      font-size: 0.95rem;
-      color: var(--text-color);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.mode-toggle {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .main {
-      flex: 1;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-y: auto;
-      transition: margin-left 0.3s ease;
-    }
+.main {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
 
-    h1 {
-      font-size: 2rem;
-      color: var(--accent-color);
-      margin-bottom: 30px;
-    }
+h1 {
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 30px;
+  text-align: center;
+}
 
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 30px;
-      width: 100%;
-      max-width: 1000px;
-    }
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+  justify-items: center; /* centers items inside each grid cell */
+}
 
-    .box {
-      background: var(--card-color);
-      border-radius: 20px;
-      padding: 30px 20px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(100px);
-      -webkit-backdrop-filter: blur(100px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+.box {
+  background: var(--card-color);
+  border-radius: 20px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 220px; /* ensures proper sizing on mobile */
+}
 
-    .box:hover {
-      box-shadow: 0 0 20px var(--hover-shadow);
-      transform: translateY(-5px);
-    }
+.box:hover {
+  box-shadow: 0 0 20px var(--hover-shadow);
+  transform: translateY(-5px);
+}
 
-    .box.active {
-      box-shadow: 0 0 30px var(--hover-shadow);
-    }
+.box.active {
+  box-shadow: 0 0 30px var(--hover-shadow);
+}
 
-    .box-icon {
-      font-size: 40px;
-      margin-bottom: 15px;
-      color: var(--text-color);
-    }
+.box-icon {
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
 
-    .box-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
+.box-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
 
-    .status {
-      margin-top: 10px;
-      font-size: 0.95rem;
-      color: #aaa;
-    }
+.status {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+/* RESPONSIVE MOBILE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    height: 100%;
+    z-index: 999;
+    top: 0;
+    left: 0;
+  }
+
+  .main {
+    padding: 15px;
+  }
+
+  .dashboard {
+    gap: 15px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
   </style>
 </head>
 <body>
