@@ -1,5 +1,5 @@
 # backend/app.py
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, Response, render_template
 from flask_cors import CORS
 import threading
 
@@ -121,8 +121,9 @@ def api_get_status():
 
 @app.route('/')
 def index():
-    return jsonify({"message": "Smart Cottage backend running."})
-
+    # ✅ Load your HTML dashboard
+    return render_template('main.html')
+    
 if __name__ == '__main__':
     # For local testing only: run with python app.py
     app.run(host='0.0.0.0', port=10000)
