@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CottageKit Dashboard</title>
+  <style>
+    :root {
+      --bg-color: #1e222e;
+      --card-color: rgba(28, 28, 28, 0.6);
+      --text-color: #ffffff;
+      --accent-color: #00ffc3;
+      --hover-shadow: rgba(0, 255, 195, 0.4);
+    }
+
+    body.light {
+      --bg-color: #f0f0f0;
+      --card-color: rgba(200, 200, 200, 0.6);
+      --text-color: #1a1a1a;
+      --accent-color: #007965;
+      --hover-shadow: rgba(0, 121, 101, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Verdana, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: var(--card-color);
+      opacity: 0.85;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 1000;
+    }
+
+    .burger-btn {
+      font-size: 22px;
+      background: none;
+      border: none;
+      color: var(--text-color);
+      cursor: pointer;
+      user-select: none;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .burger-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+      margin-top: 60px;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--card-color);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+      backdrop-filter: blur(20px);
+      transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      width: 0;
+      opacity: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .logo-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-color);
+      width: fit-content;
+      margin-bottom: 25px;
+    }
+
+    .logo-box span {
+      background: var(--accent-color);
+      color: #000;
+      font-weight: bold;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+
+    .datetime-block {
+      margin-bottom: 30px;
+    }
+
+    .time {
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    .date {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .search {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-color);
+    }
+
+    .search::placeholder {
+      color: #aaa;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mode-toggle {
+      background: none;
+      border: none;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .main {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      transition: margin-left 0.3s ease;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--accent-color);
+      margin-bottom: 30px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .box {
+      background: var(--card-color);
+      border-radius: 20px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(100px);
+      -webkit-backdrop-filter: blur(100px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .box:hover {
+      box-shadow: 0 0 20px var(--hover-shadow);
+      transform: translateY(-5px);
+    }
+
+    .box.active {
+      box-shadow: 0 0 30px var(--hover-shadow);
+    }
+
+    .box-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+
+    .box-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <button class="burger-btn" id="burgerBtn" aria-label="Toggle sidebar">☰</button>
+  </div>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div>
+        <div class="logo-box">
+          <span>CK</span> CottageKit
+        </div>
+        <div class="datetime-block">
+          <div class="time" id="time">--:--:--</div>
+          <div class="date" id="date">Loading...</div>
+        </div>
+        <input type="text" class="search" placeholder="Search..." />
+        <div class="nav-links">
+          <button class="nav-btn">🏠 Dashboard</button>
+          <button class="nav-btn">⚙️ Settings</button>
+          <button class="nav-btn">ℹ️ About</button>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <button class="nav-btn">🚪 Logout</button>
+        <button class="mode-toggle" onclick="toggleMode()" id="modeToggle">
+          <span id="modeIcon">🌞</span>
+          <span id="modeText">Light Mode</span>
+        </button>
+      </div>
+    </div>
+
+    <main class="main" id="mainContent">
+      <h1>Smart Cottage Dashboard</h1>
+      <div class="dashboard">
+    <!-- FAN -->
+    <div class="box" id="fanBox">
+      <div class="box-icon">🌀</div>
+      <div class="box-title">Fan</div>
+      <div class="status">Status: <span>OFF</span></div>
+
+    </div>
+
+    <!-- AIR PURIFIER -->
+    <div class="box" id="purifierBox">
+      <div class="box-icon">🌫️</div>
+      <div class="box-title">Air Purifier</div>
+      <div class="status">Status: <span>OFF</span></div>
+   
+    </div>
+
+    <!-- LIGHT -->
+    <div class="box" id="lightBox">
+      <div class="box-icon">💡</div>
+      <div class="box-title">Light</div>
+      <div class="status">Status: <span>OFF</span></div>
+    </div>
+
+    <!-- DOOR LOCK -->
+    <div class="box" id="doorBox">
+      <div class="box-icon">🚪</div>
+      <div class="box-title">Door Lock</div>
+      <div class="status">Status: <span>LOCKED</span></div>
+
+    </div>
+  </div>
+
+<script>
+  function updateDateTime() {
+    const timeEl = document.getElementById("time");
+    const dateEl = document.getElementById("date");
+    const now = new Date();
+    timeEl.textContent = now.toLocaleTimeString();
+    dateEl.textContent = now.toLocaleDateString(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
+
+  const burgerBtn = document.getElementById("burgerBtn");
+  const sidebar = document.getElementById("sidebar");
+
+  burgerBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("hidden");
+  });
+
+  function toggleMode() {
+    const body = document.body;
+    const modeIcon = document.getElementById("modeIcon");
+    const modeText = document.getElementById("modeText");
+    body.classList.toggle("light");
+    if (body.classList.contains("light")) {
+      modeIcon.textContent = "🌙";
+      modeText.textContent = "Dark Mode";
+    } else {
+      modeIcon.textContent = "🌞";
+      modeText.textContent = "Light Mode";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const fanBox = document.getElementById("fanBox");
+    const lightBox = document.getElementById("lightBox");
+    const purifierBox = document.getElementById("purifierBox");
+    const doorBox = document.getElementById("doorBox");
+
+    fanBox?.addEventListener("click", () => {
+      const statusEl = fanBox.querySelector(".status span");
+      const currentStatus = statusEl.textContent;
+      const newStatus = currentStatus === "ON" ? "off" : "on";
+
+      fetch("/fan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: newStatus })
+      })
+        .then(response => response.json())
+        .then(data => {
+          statusEl.textContent = data.fan_status;
+          fanBox.classList.toggle("active", data.fan_status === "ON");
+        })
+        .catch(error => {
+          console.error("Failed to toggle fan:", error);
+          alert("Failed to toggle fan.");
+        });
+    });
+
+    lightBox?.addEventListener("click", () => {
+      const statusEl = lightBox.querySelector(".status span");
+      const currentStatus = statusEl.textContent;
+           const newStatus = currentStatus === "ON" ? "off" : "on";
+
+      fetch("/light", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: newStatus })
+      })
+        .then(response => response.json())
+        .then(data => {
+          statusEl.textContent = data.light_status;
+          lightBox.classList.toggle("active", data.light_status === "ON");
+        })
+        .catch(error => {
+          console.error("Failed to toggle light:", error);
+          alert("Failed to toggle light.");
+        });
+    });
+
+    purifierBox?.addEventListener("click", () => {
+      const statusEl = purifierBox.querySelector(".status span");
+      const currentStatus = statusEl.textContent;
+      const newStatus = currentStatus === "ON" ? "off" : "on";
+
+      fetch("/purifier", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: newStatus })
+      })
+        .then(response => response.json())
+        .then(data => {
+          statusEl.textContent = data.purifier_status;
+          purifierBox.classList.toggle("active", data.purifier_status === "ON");
+        })
+        .catch(error => {
+          console.error("Failed to toggle purifier:", error);
+          alert("Failed to toggle air purifier.");
+        });
+    });
+
+    doorBox?.addEventListener("click", () => {
+      const statusEl = doorBox.querySelector(".status span");
+      const currentStatus = statusEl.textContent;
+      const newStatus = currentStatus === "LOCKED" ? "unlock" : "lock";
+
+      fetch("/door", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: newStatus })
+      })
+        .then(response => response.json())
+        .then(data => {
+          statusEl.textContent = data.door_status;
+          doorBox.classList.toggle("active", data.door_status === "UNLOCKED");
+        })
+        .catch(error => {
+          console.error("Failed to toggle door lock:", error);
+          alert("Failed to toggle door lock.");
+        });
+    });
+  });
+</script>
+</main>
+</div>
+</body>
+</html>
+
