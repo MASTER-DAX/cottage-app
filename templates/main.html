@@ -12,7 +12,6 @@
       --accent-color: #00ffc3;
       --hover-shadow: rgba(0, 255, 195, 0.4);
     }
-
     body.light {
       --bg-color: #f0f0f0;
       --card-color: rgba(200, 200, 200, 0.6);
@@ -20,236 +19,35 @@
       --accent-color: #007965;
       --hover-shadow: rgba(0, 121, 101, 0.3);
     }
-
-    * {
-      box-sizing: border-box;
-      font-family: Verdana, sans-serif;
-      transition: all 0.3s ease;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg-color);
-      color: var(--text-color);
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: var(--card-color);
-      opacity: 0.85;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      padding: 0 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      z-index: 1000;
-    }
-
-    .burger-btn {
-      font-size: 22px;
-      background: none;
-      border: none;
-      color: var(--text-color);
-      cursor: pointer;
-      user-select: none;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .burger-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .container {
-      display: flex;
-      flex: 1;
-      height: calc(100vh - 60px);
-      margin-top: 60px;
-      overflow: hidden;
-    }
-
-    .sidebar {
-      width: 260px;
-      background: var(--card-color);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
-      backdrop-filter: blur(20px);
-      transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
-    }
-
-    /* HIDDEN BY DEFAULT */
-    .sidebar.hidden {
-      width: 0;
-      opacity: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .logo-box {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text-color);
-      width: fit-content;
-      margin-bottom: 25px;
-    }
-
-    .logo-box span {
-      background: var(--accent-color);
-      color: #000;
-      font-weight: bold;
-      padding: 6px 10px;
-      border-radius: 8px;
-      margin-right: 10px;
-    }
-
-    .datetime-block {
-      margin-bottom: 30px;
-    }
-
-    .time {
-      font-size: 1.6rem;
-      font-weight: bold;
-    }
-
-    .date {
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-
-    .search {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 25px;
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-color);
-    }
-
-    .search::placeholder {
-      color: #aaa;
-    }
-
-    .nav-links {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .nav-btn {
-      background: none;
-      border: none;
-      text-align: left;
-      padding: 10px 12px;
-      border-radius: 10px;
-      color: var(--text-color);
-      font-size: 0.95rem;
-      cursor: pointer;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .mode-toggle {
-      background: none;
-      border: none;
-      font-size: 0.95rem;
-      color: var(--text-color);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .main {
-      flex: 1;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-y: auto;
-      transition: margin-left 0.3s ease;
-    }
-
-    h1 {
-      font-size: 2rem;
-      color: var(--accent-color);
-      margin-bottom: 30px;
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 30px;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .box {
-      background: var(--card-color);
-      border-radius: 20px;
-      padding: 30px 20px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(100px);
-      -webkit-backdrop-filter: blur(100px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .box:hover {
-      box-shadow: 0 0 20px var(--hover-shadow);
-      transform: translateY(-5px);
-    }
-
-    .box.active {
-      box-shadow: 0 0 30px var(--hover-shadow);
-    }
-
-    .box-icon {
-      font-size: 40px;
-      margin-bottom: 15px;
-      color: var(--text-color);
-    }
-
-    .box-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-
-    .status {
-      margin-top: 10px;
-      font-size: 0.95rem;
-      color: #aaa;
+    * { box-sizing: border-box; font-family: Verdana, sans-serif; transition: all 0.25s ease; }
+    body { margin: 0; background: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--card-color); opacity: 0.95; backdrop-filter: blur(10px); display: flex; justify-content: flex-end; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.06); z-index: 1000; }
+    .burger-btn { font-size: 22px; background: none; border: none; color: var(--text-color); cursor: pointer; padding: 6px 8px; border-radius: 6px; }
+    .container { display: flex; flex: 1; height: calc(100vh - 60px); margin-top: 60px; overflow: hidden; }
+    .sidebar { width: 260px; background: var(--card-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border-top-left-radius: 20px; border-bottom-left-radius: 20px; backdrop-filter: blur(20px); transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease; }
+    .sidebar.hidden { width: 0; opacity: 0; padding: 0; overflow: hidden; }
+    .logo-box { display: flex; align-items: center; background: rgba(255,255,255,0.06); padding: 10px 14px; border-radius: 12px; font-size: 1.1rem; font-weight: 600; color: var(--text-color); width: fit-content; margin-bottom: 18px; }
+    .logo-box span { background: var(--accent-color); color: #000; font-weight: bold; padding: 6px 10px; border-radius: 8px; margin-right: 10px; }
+    .datetime-block { margin-bottom: 20px; }
+    .time { font-size: 1.4rem; font-weight: bold; }
+    .date { font-size: 0.9rem; color: #ccc; }
+    .search { width: 100%; padding: 10px 14px; border-radius: 10px; border: none; margin-bottom: 18px; background: rgba(255,255,255,0.05); color: var(--text-color); }
+    .nav-links { display:flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+    .nav-btn { background: none; border: none; text-align: left; padding: 10px 12px; border-radius: 10px; color: var(--text-color); font-size: 0.95rem; cursor: pointer; display: flex; gap: 10px; align-items: center; }
+    .sidebar-footer { display:flex; flex-direction: column; gap: 8px; }
+    .mode-toggle { background: none; border: none; font-size: 0.95rem; color: var(--text-color); cursor: pointer; display:flex; align-items:center; gap:8px; }
+    .main { flex: 1; padding: 28px; display:flex; flex-direction: column; align-items: center; overflow-y: auto; }
+    h1 { font-size: 1.8rem; color: var(--accent-color); margin-bottom: 20px; }
+    .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
+    .box { background: var(--card-color); border-radius: 16px; padding: 22px 16px; text-align: center; cursor: pointer; box-shadow: 0 0 12px rgba(0,0,0,0.12); backdrop-filter: blur(60px); border: 1px solid rgba(255,255,255,0.06); transition: transform 0.18s ease, box-shadow 0.18s ease; user-select: none; }
+    .box:hover { transform: translateY(-6px); box-shadow: 0 10px 30px var(--hover-shadow); }
+    .box.active { box-shadow: 0 14px 42px var(--hover-shadow); transform: translateY(-8px); }
+    .box-icon { font-size: 36px; margin-bottom: 12px; color: var(--text-color); }
+    .box-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text-color); }
+    .status { margin-top: 8px; font-size: 0.95rem; color: #ddd; }
+    @media (max-width: 720px) {
+      .sidebar { display: none; }
+      .container { margin-top: 60px; }
     }
   </style>
 </head>
@@ -259,16 +57,17 @@
   </div>
 
   <div class="container">
-    <!-- SIDEBAR HIDDEN BY DEFAULT -->
     <div class="sidebar hidden" id="sidebar">
       <div>
         <div class="logo-box">
           <span>CK</span> CottageKit
         </div>
+
         <div class="datetime-block">
           <div class="time" id="time">--:--:--</div>
           <div class="date" id="date">Loading...</div>
         </div>
+
         <input type="text" class="search" placeholder="Search..." />
         <div class="nav-links">
           <button class="nav-btn">🏠 Dashboard</button>
@@ -276,6 +75,7 @@
           <button class="nav-btn">ℹ️ About</button>
         </div>
       </div>
+
       <div class="sidebar-footer">
         <button class="nav-btn">🚪 Logout</button>
         <button class="mode-toggle" onclick="toggleMode()" id="modeToggle">
@@ -288,161 +88,193 @@
     <main class="main" id="mainContent">
       <h1>Smart Cottage Dashboard</h1>
       <div class="dashboard">
-        <div class="box" id="fanBox">
-          <div class="box-icon">🌀</div>
-          <div class="box-title">Fan</div>
+        <!-- Row 1 -->
+        <div class="box" id="frontLightBox">
+          <div class="box-icon">💡</div>
+          <div class="box-title">Front Light</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
+
+        <div class="box" id="bedLightBox">
+          <div class="box-icon">🛏️💡</div>
+          <div class="box-title">Bed Light</div>
+          <div class="status">Status: <span>OFF</span></div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="box" id="frontFanBox">
+          <div class="box-icon">🌀</div>
+          <div class="box-title">Front Fan</div>
+          <div class="status">Status: <span>OFF</span></div>
+        </div>
+
+        <div class="box" id="bedFanBox">
+          <div class="box-icon">🛏️🌀</div>
+          <div class="box-title">Bed Fan</div>
+          <div class="status">Status: <span>OFF</span></div>
+        </div>
+
+        <!-- Row 3 -->
         <div class="box" id="purifierBox">
           <div class="box-icon">🌫️</div>
           <div class="box-title">Air Purifier</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
-        <div class="box" id="lightBox">
-          <div class="box-icon">💡</div>
-          <div class="box-title">Light</div>
+
+        <div class="box" id="privacyLightsBox">
+          <div class="box-icon">🔒✨</div>
+          <div class="box-title">Privacy Lights</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
-        <div class="box" id="doorBox">
+
+        <!-- Row 4 (doors) -->
+        <div class="box" id="frontDoorBox">
           <div class="box-icon">🚪</div>
-          <div class="box-title">Door Lock</div>
+          <div class="box-title">Front Door</div>
+          <div class="status">Status: <span>LOCKED</span></div>
+        </div>
+
+        <div class="box" id="bedDoorBox">
+          <div class="box-icon">🛏️🚪</div>
+          <div class="box-title">Bed Door</div>
           <div class="status">Status: <span>LOCKED</span></div>
         </div>
       </div>
     </main>
   </div>
 
-<script>
-  // Update time and date
-  function updateDateTime() {
-    const timeEl = document.getElementById("time");
-    const dateEl = document.getElementById("date");
-    const now = new Date();
-    timeEl.textContent = now.toLocaleTimeString();
-    dateEl.textContent = now.toLocaleDateString(undefined, {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-  setInterval(updateDateTime, 1000);
-  updateDateTime();
-
-  // Sidebar toggle
-  const burgerBtn = document.getElementById("burgerBtn");
-  const sidebar = document.getElementById("sidebar");
-
-  burgerBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("hidden");
-  });
-
-  // Light/Dark mode toggle
-  function toggleMode() {
-    const body = document.body;
-    const modeIcon = document.getElementById("modeIcon");
-    const modeText = document.getElementById("modeText");
-    body.classList.toggle("light");
-    if (body.classList.contains("light")) {
-      modeIcon.textContent = "🌙";
-      modeText.textContent = "Dark Mode";
-    } else {
-      modeIcon.textContent = "🌞";
-      modeText.textContent = "Light Mode";
+  <script>
+    // Update time and date
+    function updateDateTime() {
+      const timeEl = document.getElementById("time");
+      const dateEl = document.getElementById("date");
+      const now = new Date();
+      timeEl.textContent = now.toLocaleTimeString();
+      dateEl.textContent = now.toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
     }
-  }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
-  // Device toggle events
-  document.addEventListener("DOMContentLoaded", function () {
-    const fanBox = document.getElementById("fanBox");
-    const lightBox = document.getElementById("lightBox");
-    const purifierBox = document.getElementById("purifierBox");
-    const doorBox = document.getElementById("doorBox");
+    // Sidebar toggle
+    const burgerBtn = document.getElementById("burgerBtn");
+    const sidebar = document.getElementById("sidebar");
+    burgerBtn.addEventListener("click", () => sidebar.classList.toggle("hidden"));
 
-    fanBox?.addEventListener("click", () => {
-      const statusEl = fanBox.querySelector(".status span");
-      const currentStatus = statusEl.textContent;
-      const newStatus = currentStatus === "ON" ? "off" : "on";
+    // Light/Dark mode toggle
+    function toggleMode() {
+      const body = document.body;
+      const modeIcon = document.getElementById("modeIcon");
+      const modeText = document.getElementById("modeText");
+      body.classList.toggle("light");
+      if (body.classList.contains("light")) {
+        modeIcon.textContent = "🌙";
+        modeText.textContent = "Dark Mode";
+      } else {
+        modeIcon.textContent = "🌞";
+        modeText.textContent = "Light Mode";
+      }
+    }
 
-      fetch("/fan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: newStatus })
-      })
-        .then(response => response.json())
-        .then(data => {
-          statusEl.textContent = data.fan_status;
-          fanBox.classList.toggle("active", data.fan_status === "ON");
-        })
-        .catch(error => {
-          console.error("Failed to toggle fan:", error);
-          alert("Failed to toggle fan.");
+    // Utility to POST action for a device
+    async function sendDeviceAction(deviceName, action) {
+      try {
+        const resp = await fetch(`/device/${encodeURIComponent(deviceName)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: action, device_id: "esp32_1" })
         });
-    });
+        if (!resp.ok) {
+          const err = await resp.json().catch(()=>({error: 'unknown'}));
+          throw new Error(err.error || 'Request failed');
+        }
+        return await resp.json();
+      } catch (e) {
+        console.error("sendDeviceAction error:", e);
+        throw e;
+      }
+    }
 
-    lightBox?.addEventListener("click", () => {
-      const statusEl = lightBox.querySelector(".status span");
-      const currentStatus = statusEl.textContent;
-      const newStatus = currentStatus === "ON" ? "off" : "on";
+    // Toggle helper: set display state and active class
+    function applyStateToBox(boxEl, displayState) {
+      const statusEl = boxEl.querySelector(".status span");
+      statusEl.textContent = displayState;
+      boxEl.classList.toggle("active", displayState === "ON" || displayState === "UNLOCKED");
+    }
 
-      fetch("/light", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: newStatus })
-      })
-        .then(response => response.json())
-        .then(data => {
-          statusEl.textContent = data.light_status;
-          lightBox.classList.toggle("active", data.light_status === "ON");
-        })
-        .catch(error => {
-          console.error("Failed to toggle light:", error);
-          alert("Failed to toggle light.");
+    // Setup click handlers for each device box
+    document.addEventListener("DOMContentLoaded", () => {
+      // Map DOM ids -> device names (must match backend CMD_MAP keys)
+      const mapping = {
+        frontLightBox: { device: "front_light", type: "binary" },
+        bedLightBox:   { device: "bed_light",   type: "binary" },
+        frontFanBox:   { device: "front_fan",   type: "binary" },
+        bedFanBox:     { device: "bed_fan",     type: "binary" },
+        purifierBox:   { device: "purifier",    type: "binary" },
+        privacyLightsBox: { device: "privacy_lights", type: "binary" },
+        frontDoorBox:  { device: "front_door",  type: "lock" },
+        bedDoorBox:    { device: "bed_door",    type: "lock" },
+      };
+
+      // Attach listeners
+      Object.entries(mapping).forEach(([boxId, meta]) => {
+        const box = document.getElementById(boxId);
+        if (!box) return;
+        box.addEventListener("click", async () => {
+          const statusSpan = box.querySelector(".status span");
+          const curr = (statusSpan.textContent || "").toUpperCase();
+
+          // Decide next action based on type
+          let action;
+          if (meta.type === "binary") {
+            action = (curr === "ON") ? "off" : "on";
+          } else if (meta.type === "lock") {
+            action = (curr === "UNLOCKED" || curr === "UNLOCK") ? "lock" : "unlock";
+          } else {
+            action = (curr === "ON") ? "off" : "on";
+          }
+
+          // Optimistic UI change while the server queues command
+          try {
+            // Immediately set a "working" state (optional)
+            statusSpan.textContent = "…";
+
+            const res = await sendDeviceAction(meta.device, action);
+            const newState = res.new_state || (action === "on" ? "ON" : (action === "off" ? "OFF" : action.toUpperCase()));
+            applyStateToBox(box, newState);
+          } catch (err) {
+            // Revert or show an error
+            alert("Failed to send command. Check server or network.");
+            // If we failed, try to restore previous text
+            statusSpan.textContent = curr;
+          }
         });
+      });
+
+      // Fetch last known statuses from backend and apply them
+      (async function loadStatuses() {
+        try {
+          const resp = await fetch(`/api/status?device_id=esp32_1`);
+          if (!resp.ok) return;
+          const payload = await resp.json();
+          const statuses = payload.status || {};
+          Object.entries(mapping).forEach(([boxId, meta]) => {
+            const box = document.getElementById(boxId);
+            if (!box) return;
+            const state = statuses[meta.device];
+            if (state) {
+              applyStateToBox(box, state);
+            }
+          });
+        } catch (e) {
+          console.warn("Could not load statuses:", e);
+        }
+      })();
     });
-
-    purifierBox?.addEventListener("click", () => {
-      const statusEl = purifierBox.querySelector(".status span");
-      const currentStatus = statusEl.textContent;
-      const newStatus = currentStatus === "ON" ? "off" : "on";
-
-      fetch("/purifier", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: newStatus })
-      })
-        .then(response => response.json())
-        .then(data => {
-          statusEl.textContent = data.purifier_status;
-          purifierBox.classList.toggle("active", data.purifier_status === "ON");
-        })
-        .catch(error => {
-          console.error("Failed to toggle purifier:", error);
-          alert("Failed to toggle air purifier.");
-        });
-    });
-
-    doorBox?.addEventListener("click", () => {
-      const statusEl = doorBox.querySelector(".status span");
-      const currentStatus = statusEl.textContent;
-      const newStatus = currentStatus === "LOCKED" ? "unlock" : "lock";
-
-      fetch("/door", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: newStatus })
-      })
-        .then(response => response.json())
-        .then(data => {
-          statusEl.textContent = data.door_status;
-          doorBox.classList.toggle("active", data.door_status === "UNLOCKED");
-        })
-        .catch(error => {
-          console.error("Failed to toggle door lock:", error);
-          alert("Failed to toggle door lock.");
-        });
-    });
-  });
-</script>
+  </script>
 </body>
 </html>
