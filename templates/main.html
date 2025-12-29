@@ -5,50 +5,435 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CottageKit Dashboard</title>
   <style>
-    :root {
-      --bg-color: #1e222e;
-      --card-color: rgba(28, 28, 28, 0.6);
-      --text-color: #ffffff;
-      --accent-color: #00ffc3;
-      --hover-shadow: rgba(0, 255, 195, 0.4);
-    }
-    body.light {
-      --bg-color: #f0f0f0;
-      --card-color: rgba(200, 200, 200, 0.6);
-      --text-color: #1a1a1a;
-      --accent-color: #007965;
-      --hover-shadow: rgba(0, 121, 101, 0.3);
-    }
-    * { box-sizing: border-box; font-family: Verdana, sans-serif; transition: all 0.25s ease; }
-    body { margin: 0; background: var(--bg-color); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    .topbar { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--card-color); opacity: 0.95; backdrop-filter: blur(10px); display: flex; justify-content: flex-end; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.06); z-index: 1000; }
-    .burger-btn { font-size: 22px; background: none; border: none; color: var(--text-color); cursor: pointer; padding: 6px 8px; border-radius: 6px; }
-    .container { display: flex; flex: 1; height: calc(100vh - 60px); margin-top: 60px; overflow: hidden; }
-    .sidebar { width: 260px; background: var(--card-color); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border-top-left-radius: 20px; border-bottom-left-radius: 20px; backdrop-filter: blur(20px); transition: width 0.3s ease, opacity 0.3s ease, padding 0.3s ease; }
-    .sidebar.hidden { width: 0; opacity: 0; padding: 0; overflow: hidden; }
-    .logo-box { display: flex; align-items: center; background: rgba(255,255,255,0.06); padding: 10px 14px; border-radius: 12px; font-size: 1.1rem; font-weight: 600; color: var(--text-color); width: fit-content; margin-bottom: 18px; }
-    .logo-box span { background: var(--accent-color); color: #000; font-weight: bold; padding: 6px 10px; border-radius: 8px; margin-right: 10px; }
-    .datetime-block { margin-bottom: 20px; }
-    .time { font-size: 1.4rem; font-weight: bold; }
-    .date { font-size: 0.9rem; color: #ccc; }
-    .search { width: 100%; padding: 10px 14px; border-radius: 10px; border: none; margin-bottom: 18px; background: rgba(255,255,255,0.05); color: var(--text-color); }
-    .nav-links { display:flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-    .nav-btn { background: none; border: none; text-align: left; padding: 10px 12px; border-radius: 10px; color: var(--text-color); font-size: 0.95rem; cursor: pointer; display: flex; gap: 10px; align-items: center; }
-    .sidebar-footer { display:flex; flex-direction: column; gap: 8px; }
-    .mode-toggle { background: none; border: none; font-size: 0.95rem; color: var(--text-color); cursor: pointer; display:flex; align-items:center; gap:8px; }
-    .main { flex: 1; padding: 28px; display:flex; flex-direction: column; align-items: center; overflow-y: auto; }
-    h1 { font-size: 1.8rem; color: var(--accent-color); margin-bottom: 20px; }
-    .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
-    .box { background: var(--card-color); border-radius: 16px; padding: 22px 16px; text-align: center; cursor: pointer; box-shadow: 0 0 12px rgba(0,0,0,0.12); backdrop-filter: blur(60px); border: 1px solid rgba(255,255,255,0.06); transition: transform 0.18s ease, box-shadow 0.18s ease; user-select: none; }
-    .box:hover { transform: translateY(-6px); box-shadow: 0 10px 30px var(--hover-shadow); }
-    .box.active { box-shadow: 0 14px 42px var(--hover-shadow); transform: translateY(-8px); }
-    .box-icon { font-size: 36px; margin-bottom: 12px; color: var(--text-color); }
-    .box-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--text-color); }
-    .status { margin-top: 8px; font-size: 0.95rem; color: #ddd; }
-    @media (max-width: 720px) {
-      .sidebar { display: none; }
-      .container { margin-top: 60px; }
-    }
+
+
+.map-container {
+  position: relative;
+  width: 100%;
+
+
+
+}
+
+.floor-2d-img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+}
+
+/* Hotspots */
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: #242222dd;
+  border-radius: 50%;
+  padding: 1.4vw;
+  font-size: 3vw;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+   
+}
+
+.hotspot:hover {
+  background: white;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+@media (min-width: 900px) {
+  .hotspot {
+    padding: 14px;
+    font-size: 28px;
+  }
+}
+
+
+:root {
+  --bg-color: #1e222e;              /* Dark background for page */
+  --card-color: rgba(28, 28, 28, 0.35);  /* Glassy card effect */
+  --text-color: #ffffff;            /* White text */
+  --accent-color: #e2eee9;          /* Darker green accent */
+  --hover-shadow: rgba(0, 176, 112, 0.4);  /* shadow for hover effect */
+}
+
+/* REMOVE BACKGROUND OVERLAY */
+.background-blur-overlay {
+  display: none !important;
+}
+
+/* PAGE BACKGROUNDS */
+
+#mainContent.living-room {
+  background: url("{{ url_for('static', filename='living room.png') }}") center/cover no-repeat;
+  
+}
+
+#mainContent.bed-room {
+  background: url("{{ url_for('static', filename='bedroom.png') }}") center/cover no-repeat;
+ 
+}
+
+#mainContent.two-d-view {
+  position: relative;
+  overflow: hidden;  /* required for blur layer */
+
+}
+
+#mainContent.two-d-view::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+
+  background: url("{{ url_for('static', filename='front.png') }}") center/cover no-repeat;
+
+  filter: blur(5px);        /* <-- BLUR */
+  -webkit-filter: blur(5px);
+
+  z-index: -1;               /* behind content */
+}
+
+
+/* FIXED FOOTER */
+#pageFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  z-index: 9999;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+#pageFooter button {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+#pageFooter button.active {
+  background: var(--accent, #5e8bff);
+}
+
+#pageFooter button:hover {
+  background: rgba(255,255,255,0.20);
+}
+
+/* Add bottom padding to main content so it doesn't get covered by footer */
+main {
+  padding-bottom: 90px !important;
+}
+
+
+
+/* MAIN CONTENT */
+#mainContent {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  
+}
+
+/* PAGE SWITCH BUTTONS */
+.page-switcher {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.page-btn {
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  background: var(--card-color);
+  color: var(--text-color);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 10px rgba(0,0,0,0.22);
+}
+
+.page-btn.active {
+  background: var(--accent-color);
+  color: #000;
+}
+
+/* GENERAL */
+* {
+  box-sizing: border-box;
+  font-family: Verdana, sans-serif;
+  transition: all 0.25s ease;
+}
+
+/* BODY */
+body {
+  margin: 0;
+  background: transparent !important; /* background image handled by #mainContent */
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* TOP BAR */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: #1e222e;  /* Dark topbar */
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: #ffffff;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 1000;
+  backdrop-filter: none;
+}
+
+.burger-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+/* SIDEBAR */
+.container {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
+  overflow: hidden;
+   
+}
+
+.sidebar {
+  width: 260px;
+  background: #1e222e;  /* Dark sidebar */
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 0; /* remove rounded edges */
+  transition: 0.3s ease;
+  position: relative; /* for ripple */
+  overflow: hidden;   /* contain ripple */
+  cursor: pointer;
+}
+
+.sidebar.hidden {
+  width: 0;
+  opacity: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.08);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  width: fit-content;
+  margin-bottom: 18px;
+}
+
+.logo-box span {
+  background: var(--accent-color);
+  color: #000;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+/* TIME */
+.datetime-block {
+  margin-bottom: 20px;
+}
+
+.time {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+/* NAV */
+.search {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 18px;
+  background: rgba(255,255,255,0.08);
+  color: #ffffff;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* RIPPLE EFFECT */
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+}
+
+.sidebar.active-ripple::after {
+  width: 400px;
+  height: 400px;
+  opacity: 1;
+  transition: 0.4s ease;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* MAIN AREA */
+.main {
+  flex: 1;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: var(--accent-color);
+  text-shadow: 0 0 6px rgba(0,0,0,0.5);
+}
+
+/* DASHBOARD BOXES */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.box {
+  background: rgba(0,0,0,0.35);  /* glass effect */
+  border-radius: 16px;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(0,0,0,0.18);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: 0.18s;
+  color: var(--text-color);
+}
+
+.box:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px var(--hover-shadow);
+}
+
+.box.active {
+  box-shadow: 0 14px 32px var(--hover-shadow);
+}
+
+.box-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.box-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #eee;
+}
+
+/* MOBILE */
+@media (max-width: 720px) {
+  .sidebar {
+    display: none; /* default hidden on mobile */
+  }
+  .sidebar.show {
+    display: flex; /* show when burger clicked */
+    flex-direction: column;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 260px;
+    height: calc(100vh - 60px);
+    z-index: 1000;
+    background: #1e222e;
+  }
+}
+
+
+
+
   </style>
 </head>
 <body>
@@ -70,72 +455,99 @@
 
         <input type="text" class="search" placeholder="Search..." />
         <div class="nav-links">
-          <button class="nav-btn">🏠 Dashboard</button>
-          <button class="nav-btn">⚙️ Settings</button>
-          <button class="nav-btn">ℹ️ About</button>
+          <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg> Dashboard </button>
+          <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg> Settings </button>
+          <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg> About </button>
         </div>
       </div>
 
-      <div class="sidebar-footer">
-        <button class="nav-btn">🚪 Logout</button>
-        <button class="mode-toggle" onclick="toggleMode()" id="modeToggle">
-          <span id="modeIcon">🌞</span>
-          <span id="modeText">Light Mode</span>
-        </button>
-      </div>
+     
     </div>
 
+    
     <main class="main" id="mainContent">
-      <h1>Smart Cottage Dashboard</h1>
+      <div class="background-blur-overlay"></div>
+
+<footer id="pageFooter">
+  <button id="pageFront" class="active"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M200-120q-17 0-28.5-11.5T160-160v-40q-50 0-85-35t-35-85v-200q0-50 35-85t85-35v-80q0-50 35-85t85-35h400q50 0 85 35t35 85v80q50 0 85 35t35 85v200q0 50-35 85t-85 35v40q0 17-11.5 28.5T760-120q-17 0-28.5-11.5T720-160v-40H240v40q0 17-11.5 28.5T200-120Zm-40-160h640q17 0 28.5-11.5T840-320v-200q0-17-11.5-28.5T800-560q-17 0-28.5 11.5T760-520v160H200v-160q0-17-11.5-28.5T160-560q-17 0-28.5 11.5T120-520v200q0 17 11.5 28.5T160-280Zm120-160h400v-80q0-27 11-49t29-39v-112q0-17-11.5-28.5T680-760H280q-17 0-28.5 11.5T240-720v112q18 17 29 39t11 49v80Zm200 0Zm0 160Zm0-80Z"/></svg></button>
+  <button id="pageBed"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M80-200v-240q0-27 11-49t29-39v-112q0-50 35-85t85-35h160q23 0 43 8.5t37 23.5q17-15 37-23.5t43-8.5h160q50 0 85 35t35 85v112q18 17 29 39t11 49v240h-80v-80H160v80H80Zm440-360h240v-80q0-17-11.5-28.5T720-680H560q-17 0-28.5 11.5T520-640v80Zm-320 0h240v-80q0-17-11.5-28.5T400-680H240q-17 0-28.5 11.5T200-640v80Zm-40 200h640v-80q0-17-11.5-28.5T760-480H200q-17 0-28.5 11.5T160-440v80Zm640 0H160h640Z"/></svg></button>
+  <button id="page2D"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M260-360h180v-60H320v-40h80q17 0 28.5-11.5T440-500v-60q0-17-11.5-28.5T400-600H260v60h120v40h-80q-17 0-28.5 11.5T260-460v100Zm260 0h160q17 0 28.5-11.5T720-400v-160q0-17-11.5-28.5T680-600H520v240Zm60-60v-120h80v120h-80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg></button>
+</footer>
+
+
+      <h1>Smart Cottage Kit</h1>
+      <!-- 2D VIEW MAP (hidden by default) -->
+<div id="view2DContainer" style="display: none; width: 100%; max-width: 1100px; margin-top: 20px;">
+
+  <div class="map-container">
+    <img src="{{ url_for('static', filename='2d view.png') }}" class="floor-2d-img">
+
+    <!-- HOTSPOTS -->
+    <button class="hotspot" id="frontLight2D" style="top: 40%; left: 8%;"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Zm24-80h252q45-32 69.5-79T700-580q0-92-64-156t-156-64q-92 0-156 64t-64 156q0 54 24.5 101t69.5 79Zm126 0Z"/></svg> </button>
+    <button class="hotspot" id="bedLight2D" style="top: 40%; left: 88%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-200v-320H240q-20 0-32-16t-6-36l78-252q8-25 29-40.5t47-15.5h248q26 0 47 15.5t29 40.5l78 252q6 20-6 36t-32 16H520v320h-80ZM294-600h372l-62-200H356l-62 200Zm26 520v-80h320v80H320Zm160-620Z"/></svg></button>
+
+    <button class="hotspot" id="frontFan2D" style="top: 65%; left: 8%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M424-80q-51 0-77.5-30.5T320-180q0-26 11.5-50.5T367-271q22-14 35.5-36t18.5-47l-12-6q-6-3-11-7l-92 33q-17 6-33 10t-33 4q-63 0-111.5-55T80-536q0-51 30.5-77.5T179-640q26 0 51 11.5t41 35.5q14 22 36 35.5t47 18.5l6-12q3-6 7-11l-33-92q-6-17-10-33t-4-32q0-64 55-112.5T536-880q51 0 77.5 30.5T640-781q0 26-11.5 51T593-689q-22 14-35.5 36T539-606l12 6q6 3 11 7l92-34q17-6 32.5-9.5T719-640q81 0 121 67t40 149q0 51-32 77.5T777-320q-25 0-48.5-11.5T689-367q-14-22-36-35.5T606-421l-6 12q-3 6-7 11l33 92q6 16 10 30.5t4 30.5q1 65-54 115T424-80Zm56-340q25 0 42.5-17.5T540-480q0-25-17.5-42.5T480-540q-25 0-42.5 17.5T420-480q0 25 17.5 42.5T480-420Zm-46-192q6-2 12.5-3.5T459-618q8-42 30.5-78t59.5-60q5-4 8-10t3-15q0-8-6-13.5t-18-5.5q-38 0-86 16.5T400-719q0 9 2.5 17t4.5 15l27 75ZM240-400q14 0 33-7l75-27q-2-6-3.5-12.5T342-459q-42-8-78-30.5T204-549q-4-5-10.5-8t-14.5-3q-9 0-14 6t-5 18q0 54 20.5 95t59.5 41Zm184 240q47 0 92.5-19t43.5-66q0-8-2.5-15t-4.5-13l-27-75q-6 2-12.5 3.5T501-342q-8 42-30.5 78T411-204q-5 4-8.5 10.5T400-180q1 8 6 14t18 6Zm353-240q9 0 16-5t7-19q0-38-16-86.5T719-560q-9 0-17 2t-15 4l-75 28q2 6 3.5 12.5T618-501q42 8 78 30.5t60 59.5q3 5 9 8t12 3ZM618-501ZM459-618ZM342-459Zm159 117Z"/></svg></button>
+    <button class="hotspot" id="bedFan2D" style="top: 65%; left: 88%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-80v-40q0-32 24-53.5t56-26.5v-286q-22-8-38.5-23T374-544l-76 20q-36 8-68.5-6T188-578l174-44q8-41 38-68t72-30l24-90q10-35 38.5-55.5T598-878l-50 180q25 16 38.5 42t13.5 56q0 13-3 25.5t-7 24.5l54 56q25 26 29.5 61T654-374L534-494q-3 3-6.5 4.5T520-486v286q32 5 56 26.5t24 53.5v40H360Zm120-460q25 0 42.5-17.5T540-600q0-25-17.5-42.5T480-660q-25 0-42.5 17.5T420-600q0 25 17.5 42.5T480-540Z"/></svg></button>
+
+    <button class="hotspot" id="purifier2D"    style="top: 90%; left: 8%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-600q0-50 35-85t85-35h160q50 0 85 35t35 85v600H120Zm280-240h40v-200h-40v200ZM200-200h240v-80h-40q-33 0-56.5-23.5T320-360v-200q0-33 23.5-56.5T400-640h40v-80q0-17-11.5-28.5T400-760H240q-17 0-28.5 11.5T200-720v520Zm488-217q-26 0-51-7t-49-18l25-76q20 9 39.5 15t36.5 6q12 0 24-4t25-12q24-17 48-23t46-6q25 0 51.5 6.5T933-518l-25 76q-23-8-42.5-14t-33.5-6q-12 0-26.5 4.5T775-442q-21 14-42.5 19.5T688-417Zm1-156q-26 0-52-7t-49-18l25-76q26 11 44 16t32 5q12 0 24-3.5t25-12.5q25-17 48.5-23t45.5-6q25 0 50 6.5t51 17.5l-25 76q-26-9-44-14.5t-32-5.5q-13 0-26.5 4T775-598q-18 13-40.5 19t-45.5 6Zm0 312q-26 0-51.5-7T588-286l25-76q22 10 41 15.5t35 5.5q12 0 24-3.5t25-12.5q23-16 49-22.5t46-6.5q25 0 51 7t49 17l-25 76q-26-9-44.5-14.5T832-306q-14 0-28.5 4.5T775-286q-17 12-39.5 18.5T689-261Zm-249 61v-528.5 8.5-8.5V-200Z"/></svg></button>
+    <button class="hotspot" id="privacy2D"     style="top: 90%; left: 88%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M80-120v-80h80v-640h640v640h80v80H550q0 29-20.5 49.5T480-50q-29 0-49.5-20.5T410-120H80Zm160-240h480v-400H240v400Zm0 160h200v-80H240v80Zm280 0h200v-80H520v80ZM240-760h480-480Z"/></svg></button>
+
+    <button class="hotspot" id="frontDoor2D" style="top: 40%; left: 55%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-80h80v-560q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v560h80v80H120Zm560-80v-560H280v560h400ZM560-440q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520q-17 0-28.5 11.5T520-480q0 17 11.5 28.5T560-440ZM280-760v560-560Z"/></svg></button>
+    <button class="hotspot" id="bedDoor2D"   style="top: 90%; left: 45%;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-80h80v-560q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v560h80v80H120Zm160-80h400v-560H280v560Zm120-240q17 0 28.5-11.5T440-480q0-17-11.5-28.5T400-520q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM280-760v560-560Z"/></svg></button>
+  </div>
+
+</div>
+
       <div class="dashboard">
         <!-- Row 1 -->
         <div class="box" id="frontLightBox">
-          <div class="box-icon">💡</div>
+          <div class="box-icon"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-200v-80h320v80H320Zm10-120q-69-41-109.5-110T180-580q0-125 87.5-212.5T480-880q125 0 212.5 87.5T780-580q0 81-40.5 150T630-320H330Zm24-80h252q45-32 69.5-79T700-580q0-92-64-156t-156-64q-92 0-156 64t-64 156q0 54 24.5 101t69.5 79Zm126 0Z"/></svg> </div>
           <div class="box-title">Front Light</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
 
         <div class="box" id="bedLightBox">
-          <div class="box-icon">🛏️💡</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-200v-320H240q-20 0-32-16t-6-36l78-252q8-25 29-40.5t47-15.5h248q26 0 47 15.5t29 40.5l78 252q6 20-6 36t-32 16H520v320h-80ZM294-600h372l-62-200H356l-62 200Zm26 520v-80h320v80H320Zm160-620Z"/></svg></div>
           <div class="box-title">Bed Light</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
 
         <!-- Row 2 -->
         <div class="box" id="frontFanBox">
-          <div class="box-icon">🌀</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M424-80q-51 0-77.5-30.5T320-180q0-26 11.5-50.5T367-271q22-14 35.5-36t18.5-47l-12-6q-6-3-11-7l-92 33q-17 6-33 10t-33 4q-63 0-111.5-55T80-536q0-51 30.5-77.5T179-640q26 0 51 11.5t41 35.5q14 22 36 35.5t47 18.5l6-12q3-6 7-11l-33-92q-6-17-10-33t-4-32q0-64 55-112.5T536-880q51 0 77.5 30.5T640-781q0 26-11.5 51T593-689q-22 14-35.5 36T539-606l12 6q6 3 11 7l92-34q17-6 32.5-9.5T719-640q81 0 121 67t40 149q0 51-32 77.5T777-320q-25 0-48.5-11.5T689-367q-14-22-36-35.5T606-421l-6 12q-3 6-7 11l33 92q6 16 10 30.5t4 30.5q1 65-54 115T424-80Zm56-340q25 0 42.5-17.5T540-480q0-25-17.5-42.5T480-540q-25 0-42.5 17.5T420-480q0 25 17.5 42.5T480-420Zm-46-192q6-2 12.5-3.5T459-618q8-42 30.5-78t59.5-60q5-4 8-10t3-15q0-8-6-13.5t-18-5.5q-38 0-86 16.5T400-719q0 9 2.5 17t4.5 15l27 75ZM240-400q14 0 33-7l75-27q-2-6-3.5-12.5T342-459q-42-8-78-30.5T204-549q-4-5-10.5-8t-14.5-3q-9 0-14 6t-5 18q0 54 20.5 95t59.5 41Zm184 240q47 0 92.5-19t43.5-66q0-8-2.5-15t-4.5-13l-27-75q-6 2-12.5 3.5T501-342q-8 42-30.5 78T411-204q-5 4-8.5 10.5T400-180q1 8 6 14t18 6Zm353-240q9 0 16-5t7-19q0-38-16-86.5T719-560q-9 0-17 2t-15 4l-75 28q2 6 3.5 12.5T618-501q42 8 78 30.5t60 59.5q3 5 9 8t12 3ZM618-501ZM459-618ZM342-459Zm159 117Z"/></svg></div>
           <div class="box-title">Front Fan</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
 
         <div class="box" id="bedFanBox">
-          <div class="box-icon">🛏️🌀</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-80v-40q0-32 24-53.5t56-26.5v-286q-22-8-38.5-23T374-544l-76 20q-36 8-68.5-6T188-578l174-44q8-41 38-68t72-30l24-90q10-35 38.5-55.5T598-878l-50 180q25 16 38.5 42t13.5 56q0 13-3 25.5t-7 24.5l54 56q25 26 29.5 61T654-374L534-494q-3 3-6.5 4.5T520-486v286q32 5 56 26.5t24 53.5v40H360Zm120-460q25 0 42.5-17.5T540-600q0-25-17.5-42.5T480-660q-25 0-42.5 17.5T420-600q0 25 17.5 42.5T480-540Z"/></svg></div>
           <div class="box-title">Bed Fan</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
 
         <!-- Row 3 -->
         <div class="box" id="purifierBox">
-          <div class="box-icon">🌫️</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-600q0-50 35-85t85-35h160q50 0 85 35t35 85v600H120Zm280-240h40v-200h-40v200ZM200-200h240v-80h-40q-33 0-56.5-23.5T320-360v-200q0-33 23.5-56.5T400-640h40v-80q0-17-11.5-28.5T400-760H240q-17 0-28.5 11.5T200-720v520Zm488-217q-26 0-51-7t-49-18l25-76q20 9 39.5 15t36.5 6q12 0 24-4t25-12q24-17 48-23t46-6q25 0 51.5 6.5T933-518l-25 76q-23-8-42.5-14t-33.5-6q-12 0-26.5 4.5T775-442q-21 14-42.5 19.5T688-417Zm1-156q-26 0-52-7t-49-18l25-76q26 11 44 16t32 5q12 0 24-3.5t25-12.5q25-17 48.5-23t45.5-6q25 0 50 6.5t51 17.5l-25 76q-26-9-44-14.5t-32-5.5q-13 0-26.5 4T775-598q-18 13-40.5 19t-45.5 6Zm0 312q-26 0-51.5-7T588-286l25-76q22 10 41 15.5t35 5.5q12 0 24-3.5t25-12.5q23-16 49-22.5t46-6.5q25 0 51 7t49 17l-25 76q-26-9-44.5-14.5T832-306q-14 0-28.5 4.5T775-286q-17 12-39.5 18.5T689-261Zm-249 61v-528.5 8.5-8.5V-200Z"/></svg></div>
           <div class="box-title">Air Purifier</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
 
         <div class="box" id="privacyLightsBox">
-          <div class="box-icon">🔒✨</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M80-120v-80h80v-640h640v640h80v80H550q0 29-20.5 49.5T480-50q-29 0-49.5-20.5T410-120H80Zm160-240h480v-400H240v400Zm0 160h200v-80H240v80Zm280 0h200v-80H520v80ZM240-760h480-480Z"/></svg></div>
+          
           <div class="box-title">Privacy Lights</div>
           <div class="status">Status: <span>OFF</span></div>
         </div>
 
         <!-- Row 4 (doors) -->
         <div class="box" id="frontDoorBox">
-          <div class="box-icon">🚪</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-80h80v-560q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v560h80v80H120Zm560-80v-560H280v560h400ZM560-440q17 0 28.5-11.5T600-480q0-17-11.5-28.5T560-520q-17 0-28.5 11.5T520-480q0 17 11.5 28.5T560-440ZM280-760v560-560Z"/></svg></div>
           <div class="box-title">Front Door</div>
           <div class="status">Status: <span>LOCKED</span></div>
         </div>
 
         <div class="box" id="bedDoorBox">
-          <div class="box-icon">🛏️🚪</div>
+          <div class="box-icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-80h80v-560q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v560h80v80H120Zm160-80h400v-560H280v560Zm120-240q17 0 28.5-11.5T440-480q0-17-11.5-28.5T400-520q-17 0-28.5 11.5T360-480q0 17 11.5 28.5T400-440ZM280-760v560-560Z"/></svg></div>
           <div class="box-title">Bed Door</div>
           <div class="status">Status: <span>LOCKED</span></div>
         </div>
@@ -143,138 +555,268 @@
     </main>
   </div>
 
-  <script>
-    // Update time and date
-    function updateDateTime() {
-      const timeEl = document.getElementById("time");
-      const dateEl = document.getElementById("date");
-      const now = new Date();
-      timeEl.textContent = now.toLocaleTimeString();
-      dateEl.textContent = now.toLocaleDateString(undefined, {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-
-    // Sidebar toggle
-    const burgerBtn = document.getElementById("burgerBtn");
-    const sidebar = document.getElementById("sidebar");
-    burgerBtn.addEventListener("click", () => sidebar.classList.toggle("hidden"));
-
-    // Light/Dark mode toggle
-    function toggleMode() {
-      const body = document.body;
-      const modeIcon = document.getElementById("modeIcon");
-      const modeText = document.getElementById("modeText");
-      body.classList.toggle("light");
-      if (body.classList.contains("light")) {
-        modeIcon.textContent = "🌙";
-        modeText.textContent = "Dark Mode";
-      } else {
-        modeIcon.textContent = "🌞";
-        modeText.textContent = "Light Mode";
-      }
-    }
-
-    // Utility to POST action for a device
-    async function sendDeviceAction(deviceName, action) {
-      try {
-        const resp = await fetch(`/device/${encodeURIComponent(deviceName)}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: action, device_id: "esp32_1" })
-        });
-        if (!resp.ok) {
-          const err = await resp.json().catch(()=>({error: 'unknown'}));
-          throw new Error(err.error || 'Request failed');
-        }
-        return await resp.json();
-      } catch (e) {
-        console.error("sendDeviceAction error:", e);
-        throw e;
-      }
-    }
-
-    // Toggle helper: set display state and active class
-    function applyStateToBox(boxEl, displayState) {
-      const statusEl = boxEl.querySelector(".status span");
-      statusEl.textContent = displayState;
-      boxEl.classList.toggle("active", displayState === "ON" || displayState === "UNLOCKED");
-    }
-
-    // Setup click handlers for each device box
-    document.addEventListener("DOMContentLoaded", () => {
-      // Map DOM ids -> device names (must match backend CMD_MAP keys)
-      const mapping = {
-        frontLightBox: { device: "front_light", type: "binary" },
-        bedLightBox:   { device: "bed_light",   type: "binary" },
-        frontFanBox:   { device: "front_fan",   type: "binary" },
-        bedFanBox:     { device: "bed_fan",     type: "binary" },
-        purifierBox:   { device: "purifier",    type: "binary" },
-        privacyLightsBox: { device: "privacy_lights", type: "binary" },
-        frontDoorBox:  { device: "front_door",  type: "lock" },
-        bedDoorBox:    { device: "bed_door",    type: "lock" },
-      };
-
-      // Attach listeners
-      Object.entries(mapping).forEach(([boxId, meta]) => {
-        const box = document.getElementById(boxId);
-        if (!box) return;
-        box.addEventListener("click", async () => {
-          const statusSpan = box.querySelector(".status span");
-          const curr = (statusSpan.textContent || "").toUpperCase();
-
-          // Decide next action based on type
-          let action;
-          if (meta.type === "binary") {
-            action = (curr === "ON") ? "off" : "on";
-          } else if (meta.type === "lock") {
-            action = (curr === "UNLOCKED" || curr === "UNLOCK") ? "lock" : "unlock";
-          } else {
-            action = (curr === "ON") ? "off" : "on";
-          }
-
-          // Optimistic UI change while the server queues command
-          try {
-            // Immediately set a "working" state (optional)
-            statusSpan.textContent = "…";
-
-            const res = await sendDeviceAction(meta.device, action);
-            const newState = res.new_state || (action === "on" ? "ON" : (action === "off" ? "OFF" : action.toUpperCase()));
-            applyStateToBox(box, newState);
-          } catch (err) {
-            // Revert or show an error
-            alert("Failed to send command. Check server or network.");
-            // If we failed, try to restore previous text
-            statusSpan.textContent = curr;
-          }
-        });
-      });
-
-      // Fetch last known statuses from backend and apply them
-      (async function loadStatuses() {
-        try {
-          const resp = await fetch(`/api/status?device_id=esp32_1`);
-          if (!resp.ok) return;
-          const payload = await resp.json();
-          const statuses = payload.status || {};
-          Object.entries(mapping).forEach(([boxId, meta]) => {
-            const box = document.getElementById(boxId);
-            if (!box) return;
-            const state = statuses[meta.device];
-            if (state) {
-              applyStateToBox(box, state);
-            }
-          });
-        } catch (e) {
-          console.warn("Could not load statuses:", e);
-        }
-      })();
+ <script>
+  // Update time and date
+  function updateDateTime() {
+    const timeEl = document.getElementById("time");
+    const dateEl = document.getElementById("date");
+    const now = new Date();
+    timeEl.textContent = now.toLocaleTimeString();
+    dateEl.textContent = now.toLocaleDateString(undefined, {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
-  </script>
+  }
+  setInterval(updateDateTime, 1000);
+  updateDateTime();
+
+  // Sidebar toggle
+ // Sidebar toggle for hidden
+const burgerBtn = document.getElementById("burgerBtn");
+const sidebar = document.getElementById("sidebar");
+
+burgerBtn.addEventListener("click", () => {
+  if (window.innerWidth <= 720) {
+    sidebar.classList.toggle("show");
+  } else {
+    sidebar.classList.toggle("hidden");
+  }
+});
+
+// Sidebar ripple effect on click
+sidebar.addEventListener("click", () => {
+  sidebar.classList.add("active-ripple");
+  setTimeout(() => {
+    sidebar.classList.remove("active-ripple");
+  }, 400); // matches CSS transition duration
+});
+
+
+
+  // Utility to POST action for a device
+  async function sendDeviceAction(deviceName, action) {
+    try {
+      const resp = await fetch(`/device/${encodeURIComponent(deviceName)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: action, device_id: "esp32_1" })
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(()=>({error: 'unknown'}));
+        throw new Error(err.error || 'Request failed');
+      }
+      return await resp.json();
+    } catch (e) {
+      console.error("sendDeviceAction error:", e);
+      throw e;
+    }
+  }
+
+  // Toggle helper: updates display
+  function applyStateToBox(boxEl, displayState) {
+    const statusEl = boxEl.querySelector(".status span");
+    statusEl.textContent = displayState;
+    boxEl.classList.toggle("active", displayState === "ON" || displayState === "UNLOCKED");
+  }
+
+  // --- PAGE SWITCHING ---
+  const mainContent = document.getElementById("mainContent");
+
+ // --- Swipe detection ---
+  let startX = 0;
+  let endX = 0;
+
+  document.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  document.addEventListener("touchend", (e) => {
+    endX = e.changedTouches[0].clientX;
+    handleSwipe();
+  });
+
+  function handleSwipe() {
+    const diff = endX - startX;
+    if (Math.abs(diff) < 50) return; // ignore tiny swipes
+    if (diff > 0) {
+      // swipe right → previous page
+      if (mainContent.classList.contains("bed-room")) showLivingRoom();
+      else if (mainContent.classList.contains("two-d-view")) showBedRoom();
+    } else {
+      // swipe left → next page
+      if (mainContent.classList.contains("living-room")) showBedRoom();
+      else if (mainContent.classList.contains("bed-room")) show2DView();
+    }
+  }
+
+  // --- Footer active icon ---
+  function setActiveFooter(activeId) {
+    document.querySelectorAll(".footer-btn").forEach(btn => btn.classList.remove("active"));
+    document.getElementById(activeId).classList.add("active");
+  }
+
+
+
+  function showLivingRoom() {
+    mainContent.classList.remove("bed-room", "two-d-view");
+    mainContent.classList.add("living-room");
+
+    document.getElementById("pageFront").classList.add("active");
+    document.getElementById("pageBed").classList.remove("active");
+    document.getElementById("page2D").classList.remove("active");
+
+    // HIDE 2D view
+    document.getElementById("view2DContainer").style.display = "none";
+
+    // SHOW dashboard
+    document.querySelector(".dashboard").style.display = "grid";
+
+
+    // FRONT DEVICES SHOW
+    document.getElementById("frontLightBox").style.display = "block";
+    document.getElementById("frontFanBox").style.display = "block";
+    document.getElementById("purifierBox").style.display = "block";
+    document.getElementById("frontDoorBox").style.display = "block";
+
+    // BED DEVICES HIDE
+    document.getElementById("bedLightBox").style.display = "none";
+    document.getElementById("bedFanBox").style.display = "none";
+    document.getElementById("privacyLightsBox").style.display = "none";
+    document.getElementById("bedDoorBox").style.display = "none";
+  }
+
+ function showBedRoom() {
+    mainContent.classList.remove("living-room", "two-d-view");
+    mainContent.classList.add("bed-room");
+
+    document.getElementById("pageFront").classList.remove("active");
+    document.getElementById("pageBed").classList.add("active");
+    document.getElementById("page2D").classList.remove("active");
+
+    // HIDE 2D view
+    document.getElementById("view2DContainer").style.display = "none";
+
+    // SHOW dashboard
+    document.querySelector(".dashboard").style.display = "grid";
+
+    // BED DEVICES SHOW
+    document.getElementById("bedLightBox").style.display = "block";
+    document.getElementById("bedFanBox").style.display = "block";
+    document.getElementById("privacyLightsBox").style.display = "block";
+    document.getElementById("bedDoorBox").style.display = "block";
+
+    // FRONT DEVICES HIDE
+    document.getElementById("frontLightBox").style.display = "none";
+    document.getElementById("frontFanBox").style.display = "none";
+    document.getElementById("purifierBox").style.display = "none";
+    document.getElementById("frontDoorBox").style.display = "none";
+  }
+
+  function show2DView() {
+  mainContent.classList.remove("living-room", "bed-room");
+  mainContent.classList.add("two-d-view");
+
+  document.getElementById("pageFront").classList.remove("active");
+  document.getElementById("pageBed").classList.remove("active");
+  document.getElementById("page2D").classList.add("active");
+
+  // SHOW map
+  document.getElementById("view2DContainer").style.display = "block";
+
+  // HIDE dashboard boxes
+  document.querySelector(".dashboard").style.display = "none";
+}
+
+  // Main Logic
+  document.addEventListener("DOMContentLoaded", () => {
+    // Map DOM ids -> device names (must match backend CMD_MAP keys)
+    const mapping = {
+      frontLightBox: { device: "front_light", type: "binary" },
+      bedLightBox:   { device: "bed_light",   type: "binary" },
+      frontFanBox:   { device: "front_fan",   type: "binary" },
+      bedFanBox:     { device: "bed_fan",     type: "binary" },
+      purifierBox:   { device: "purifier",    type: "binary" },
+      privacyLightsBox: { device: "privacy_lights", type: "binary" },
+      frontDoorBox:  { device: "front_door",  type: "lock" },
+      bedDoorBox:    { device: "bed_door",    type: "lock" },
+    };
+
+    // Attach listeners
+    Object.entries(mapping).forEach(([boxId, meta]) => {
+      const box = document.getElementById(boxId);
+      if (!box) return;
+      box.addEventListener("click", async () => {
+        const statusSpan = box.querySelector(".status span");
+        const curr = (statusSpan.textContent || "").toUpperCase();
+
+        // Decide next action based on type
+        let action;
+        if (meta.type === "binary") {
+          action = (curr === "ON") ? "off" : "on";
+        } else if (meta.type === "lock") {
+          action = (curr === "UNLOCKED" || curr === "UNLOCK") ? "lock" : "unlock";
+        } else {
+          action = (curr === "ON") ? "off" : "on";
+        }
+
+        // Optimistic UI
+        try {
+          statusSpan.textContent = "…";
+
+          const res = await sendDeviceAction(meta.device, action);
+          const newState =
+            res.new_state ||
+            (action === "on" ? "ON" :
+            action === "off" ? "OFF" : action.toUpperCase());
+
+          applyStateToBox(box, newState);
+        } catch (err) {
+          alert("Failed to send command. Check server or network.");
+          statusSpan.textContent = curr;
+        }
+      });
+    });
+
+    // Fetch last known statuses
+    (async function loadStatuses() {
+      try {
+        const resp = await fetch(`/api/status?device_id=esp32_1`);
+        if (!resp.ok) return;
+        const payload = await resp.json();
+        const statuses = payload.status || {};
+        Object.entries(mapping).forEach(([boxId, meta]) => {
+          const box = document.getElementById(boxId);
+          if (!box) return;
+          const state = statuses[meta.device];
+          if (state) {
+            applyStateToBox(box, state);
+          }
+        });
+      } catch (e) {
+        console.warn("Could not load statuses:", e);
+      }
+    })();
+
+    // DEFAULT PAGE: LIVING ROOM
+    showLivingRoom();
+
+    // PAGE SWITCH BUTTONS
+    document.getElementById("pageFront").addEventListener("click", showLivingRoom);
+    document.getElementById("pageBed").addEventListener("click", showBedRoom);
+    document.getElementById("page2D").addEventListener("click", show2DView);
+    document.getElementById("frontLight2D").onclick = () => document.getElementById("frontLightBox").click();
+document.getElementById("bedLight2D").onclick   = () => document.getElementById("bedLightBox").click();
+document.getElementById("frontFan2D").onclick   = () => document.getElementById("frontFanBox").click();
+document.getElementById("bedFan2D").onclick     = () => document.getElementById("bedFanBox").click();
+document.getElementById("purifier2D").onclick   = () => document.getElementById("purifierBox").click();
+document.getElementById("privacy2D").onclick    = () => document.getElementById("privacyLightsBox").click();
+document.getElementById("frontDoor2D").onclick  = () => document.getElementById("frontDoorBox").click();
+document.getElementById("bedDoor2D").onclick    = () => document.getElementById("bedDoorBox").click();
+
+  });
+</script>
+
 </body>
 </html>
