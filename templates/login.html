@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Cottage Login</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #e8f2ff;
+    font-family: Inter, system-ui, -apple-system;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page {
+    display: flex;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .branding {
+    max-width: 420px;
+  }
+
+  .branding h1 {
+    font-size: 48px;
+    margin: 0;
+    color: #1f6feb;
+    font-weight: 800;
+  }
+
+  .branding p {
+    margin-top: 12px;
+    font-size: 22px;
+  }
+
+  .login {
+    width: 360px;
+  }
+
+  input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    background: #1f6feb;
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #msg {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #374151;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 12px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="branding">
+    <h1>Smart Cottage</h1>
+    <p>Innovation at the Heart of Home</p>
+  </div>
+
+  <div class="login">
+    <input id="uid" placeholder="Unique ID">
+    <input id="name" placeholder="Full Name">
+    <button onclick="login()">Log In</button>
+    <div id="msg"></div>
+  </div>
+
+</div>
+
+<footer>© Smart Cottage 2026</footer>
+
+<script>
+const API_BASE = "https://YOUR-BACKEND-RENDER-URL"; // 🔴 CHANGE THIS
+
+async function login() {
+  const uid = document.getElementById("uid").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const msg = document.getElementById("msg");
+
+  msg.textContent = "Logging in…";
+
+  const res = await fetch(API_BASE + "/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ uid, name })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    msg.textContent = data.message || "Login failed";
+    return;
+  }
+
+  msg.textContent = "Login successful";
+
+  // example: save session
+  localStorage.setItem("user", JSON.stringify(data.user));
+
+  // redirect
+  // window.location.href = "/dashboard.html";
+}
+</script>
+
+</body>
+</html>
