@@ -87,8 +87,8 @@
   <p class="sub">Innovation at the Heart of Home</p>
 
   <form id="loginForm">
-    <label for="uid">Card UID</label>
-    <input type="text" id="uid" required placeholder="Enter your UID">
+    <label for="employee_id">Card UID</label>
+    <input type="text" id="employee_id" required placeholder="Enter your UID">
 
     <label for="name">Name</label>
     <input type="text" id="name" required placeholder="Enter your full name">
@@ -110,7 +110,7 @@ form.addEventListener("submit", async (e) => {
   message.textContent = "Checking credentials…";
 
   const payload = {
-    uid: document.getElementById("uid").value.trim(),
+    employee_id: document.getElementById("employee_id").value.trim(),
     name: document.getElementById("name").value.trim()
   };
 
@@ -118,7 +118,7 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch("/api/check_access", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ uid: payload.uid, reader_cottage: "dummy" }) // just need uid for login
+      body: JSON.stringify({ employee_id: payload.employee_id, reader_cottage: "dummy" }) // just need uid for login
     });
 
     const json = await res.json();
