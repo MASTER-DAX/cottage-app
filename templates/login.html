@@ -3,131 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Cottage Login</title>
-
+<title>Smart Cottage — Login</title>
+<link href="https://fonts.googleapis.com/css?family=Nunito:400,700" rel="stylesheet">
 <style>
   body {
     margin: 0;
-    height: 100vh;
-    background: #e8f2ff;
-    font-family: Inter, system-ui, -apple-system;
+    font-family: 'Nunito', sans-serif;
+    background-color: #e8f2ff;
     display: flex;
-    align-items: center;
     justify-content: center;
-  }
-
-  .page {
-    display: flex;
-    gap: 80px;
     align-items: center;
+    height: 100vh;
   }
 
-  .branding {
-    max-width: 420px;
+  .container {
+    background: #fff;
+    padding: 36px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    width: 350px;
   }
 
-  .branding h1 {
-    font-size: 48px;
-    margin: 0;
-    color: #1f6feb;
-    font-weight: 800;
-  }
-
-  .branding p {
-    margin-top: 12px;
+  h1 {
+    margin: 0 0 6px 0;
     font-size: 22px;
+    color: #1f6feb;
   }
 
-  .login {
-    width: 360px;
+  p.sub {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #374151;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    margin-top: 12px;
+    color: #374151;
   }
 
   input {
     width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
+    padding: 10px 12px;
+    margin-top: 6px;
     border-radius: 8px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #e6e9ee;
     font-size: 14px;
   }
 
   button {
     width: 100%;
-    padding: 14px;
-    background: #1f6feb;
+    margin-top: 20px;
+    padding: 12px;
+    background-color: #1f6feb;
+    color: #fff;
     border: none;
-    color: white;
+    border-radius: 10px;
+    font-size: 15px;
     font-weight: 600;
-    border-radius: 8px;
     cursor: pointer;
   }
 
-  #msg {
+  #message {
     margin-top: 12px;
     font-size: 13px;
-    color: #374151;
+    color: #d14343;
+    min-height: 18px;
   }
 
   footer {
-    position: fixed;
-    bottom: 12px;
+    margin-top: 24px;
     font-size: 12px;
     color: #6b7280;
+    text-align: center;
   }
 </style>
 </head>
-
 <body>
 
-<div class="page">
+<div class="container">
+  <h1>Smart Cottage System</h1>
+  <p class="sub">Innovation at the Heart of Home</p>
 
-  <div class="branding">
-    <h1>Smart Cottage</h1>
-    <p>Innovation at the Heart of Home</p>
-  </div>
+  <form id="loginForm">
+    <label for="uid">Card UID</label>
+    <input type="text" id="uid" required placeholder="Enter your UID">
 
-  <div class="login">
-    <input id="uid" placeholder="Unique ID">
-    <input id="name" placeholder="Full Name">
-    <button onclick="login()">Log In</button>
-    <div id="msg"></div>
-  </div>
+    <label for="name">Name</label>
+    <input type="text" id="name" required placeholder="Enter your full name">
 
+    <button type="submit">Login</button>
+    <div id="message"></div>
+  </form>
+
+  <footer>© Smart Cottage 2026</footer>
 </div>
 
-<footer>© Smart Cottage 2026</footer>
-
 <script>
-const API_BASE = "https://YOUR-BACKEND-RENDER-URL"; // 🔴 CHANGE THIS
+const form = document.getElementById("loginForm");
+const message = document.getElementById("message");
 
-async function login() {
-  const uid = document.getElementById("uid").value.trim();
-  const name = document.getElementById("name").value.trim();
-  const msg = document.getElementById("msg");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  msg.textContent = "Logging in…";
+  message.textContent = "Checking credentials…";
 
-  const res = await fetch(API_BASE + "/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ uid, name })
-  });
+  const payload = {
+    uid: document.getElementById("uid").value.trim(),
+    name: document.getElementById("name").value.trim()
+  };
 
-  const data = await res.json();
+  try {
+    const res = await fetch("/api/check_access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uid: payload.uid, reader_cottage: "dummy" }) // just need uid for login
+    });
 
-  if (!res.ok) {
-    msg.textContent = data.message || "Login failed";
-    return;
+    const json = await res.json();
+
+    // Only check if name matches
+    if (res.ok && json.user && json.user.name === payload.name) {
+      message.style.color = "green";
+      message.textContent = "Login successful! Redirecting…";
+
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = "/main.html"; // main dashboard page
+      }, 1000);
+    } else {
+      message.style.color = "#d14343";
+      message.textContent = json.reason || "Invalid UID or Name";
+    }
+  } catch (err) {
+    message.style.color = "#d14343";
+    message.textContent = "Server error, try again.";
+    console.error(err);
   }
-
-  msg.textContent = "Login successful";
-
-  // example: save session
-  localStorage.setItem("user", JSON.stringify(data.user));
-
-  // redirect
-  // window.location.href = "/dashboard.html";
-}
+});
 </script>
 
 </body>
