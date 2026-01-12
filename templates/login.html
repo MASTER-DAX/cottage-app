@@ -87,11 +87,11 @@
   <p class="sub">Innovation at the Heart of Home</p>
 
   <form id="loginForm">
-    <label for="employee_id">Card UID</label>
-    <input type="text" id="employee_id" required placeholder="Enter your UID">
-
     <label for="name">Name</label>
     <input type="text" id="name" required placeholder="Enter your full name">
+
+    <label for="employee_id">Employee ID</label>
+    <input type="text" id="employee_id" required placeholder="Enter your Employee ID">
 
     <button type="submit">Login</button>
     <div id="message"></div>
@@ -107,34 +107,33 @@ const message = document.getElementById("message");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  message.style.color = "#374151";
   message.textContent = "Checking credentials…";
 
   const payload = {
-    employee_id: document.getElementById("employee_id").value.trim(),
-    name: document.getElementById("name").value.trim()
+    name: document.getElementById("name").value.trim(),
+    employee_id: document.getElementById("employee_id").value.trim()
   };
 
   try {
-    const res = await fetch("/api/check_access", {
+    const res = await fetch("/api/login_user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ employee_id: payload.employee_id, reader_cottage: "dummy" }) // just need uid for login
+      body: JSON.stringify(payload)
     });
 
     const json = await res.json();
 
-    // Only check if name matches
-    if (res.ok && json.user && json.user.name === payload.name) {
+    if (res.ok && json.success) {
       message.style.color = "green";
       message.textContent = "Login successful! Redirecting…";
 
-      // Redirect to dashboard
       setTimeout(() => {
         window.location.href = "/main.html"; // main dashboard page
       }, 1000);
     } else {
       message.style.color = "#d14343";
-      message.textContent = json.reason || "Invalid UID or Name";
+      message.textContent = json.message || "Invalid credentials";
     }
   } catch (err) {
     message.style.color = "#d14343";
