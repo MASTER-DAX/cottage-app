@@ -1,83 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Cottage — Login</title>
-<style>
-  body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #e8f2ff; margin: 0; }
-  .container { background: #fff; padding: 24px 36px; border-radius: 12px; width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-  h2 { margin: 0 0 12px 0; color: #1f6feb; }
-  label { display: block; margin-top: 12px; font-size: 14px; }
-  input { width: 100%; padding: 10px; margin-top: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
-  button { width: 100%; padding: 12px; margin-top: 20px; background: #1f6feb; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-  #message { margin-top: 12px; font-size: 13px; min-height: 18px; }
-</style>
+  <meta charset="UTF-8">
+  <title>Mobile App Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box {
+      background: #fff;
+      padding: 25px;
+      width: 320px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Smart Cottage Login</h2>
-  <form id="loginForm">
-    <label for="name">Name</label>
-    <input type="text" id="name" required placeholder="Enter your full name">
+<div class="login-box">
+  <h2>Login</h2>
 
-    <label for="employee_id">Employee ID</label>
-    <input type="text" id="employee_id" required placeholder="Enter Employee ID">
+  <input type="text" id="name" placeholder="Name" />
+  <input type="text" id="employee_id" placeholder="Employee ID" />
 
-    <button type="submit">Login</button>
-    <div id="message"></div>
-  </form>
+  <button onclick="login()">Login</button>
+
+  <div class="result" id="result"></div>
 </div>
 
 <script>
-const form = document.getElementById("loginForm");
-const message = document.getElementById("message");
+  const MOBILE_BACKEND_URL = "https://cottage-app.onrender.com/api/login";
 
-// 🔹 Palitan ito ng deployed mobile backend URL
-const MOBILE_BACKEND_URL = "https://smart-cottage-mobile.onrender.com";
+  async function login() {
+    const name = document.getElementById("name").value.trim();
+    const employee_id = document.getElementById("employee_id").value.trim();
+    const result = document.getElementById("result");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    result.innerHTML = "Logging in...";
 
-  message.style.color = "#374151";
-  message.textContent = "Checking credentials…";
+    try {
+      const res = await fetch(MOBILE_BACKEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, employee_id })
+      });
 
-  const payload = {
-    name: document.getElementById("name").value.trim(),
-    employee_id: document.getElementById("employee_id").value.trim()
-  };
+      const data = await res.json();
 
-  try {
-    const res = await fetch(`${MOBILE_BACKEND_URL}/api/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+      if (!data.success) {
+        result.innerHTML = "❌ " + data.message;
+        result.style.color = "red";
+        return;
+      }
 
-    const json = await res.json();
-
-    if (res.ok && json.success) {
-      message.style.color = "green";
-      message.textContent = "Login successful!";
-
-      // 🔹 Save user info locally
-      localStorage.setItem("user", JSON.stringify(json.user));
-
-      // 🔹 Redirect to main dashboard page
-      setTimeout(() => {
-        window.location.href = "/main.html";
-      }, 800);
-    } else {
-      message.style.color = "#d14343";
-      message.textContent = json.message || "Invalid credentials";
+      result.style.color = "green";
+      result.innerHTML = `
+        ✅ Login Success<br>
+        <b>Name:</b> ${data.user.name}<br>
+        <b>Employee ID:</b> ${data.user.employee_id}<br>
+        <b>Access:</b> ${data.user.access_level}<br>
+        <b>Cottage:</b> ${data.user.cottage}
+      `;
+    } catch (err) {
+      result.style.color = "red";
+      result.innerHTML = "❌ Server error";
     }
-  } catch (err) {
-    message.style.color = "#d14343";
-    message.textContent = "Server error, try again.";
-    console.error(err);
   }
-});
 </script>
 
 </body>
