@@ -4,107 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Cottage — Login</title>
-<link href="https://fonts.googleapis.com/css?family=Nunito:400,700" rel="stylesheet">
 <style>
-  body {
-    margin: 0;
-    font-family: 'Nunito', sans-serif;
-    background-color: #e8f2ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  .container {
-    background: #fff;
-    padding: 36px 24px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-    width: 350px;
-  }
-
-  h1 {
-    margin: 0 0 6px 0;
-    font-size: 22px;
-    color: #1f6feb;
-  }
-
-  p.sub {
-    margin: 0 0 20px 0;
-    font-size: 14px;
-    color: #374151;
-  }
-
-  label {
-    display: block;
-    font-size: 13px;
-    margin-top: 12px;
-    color: #374151;
-  }
-
-  input {
-    width: 100%;
-    padding: 10px 12px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid #e6e9ee;
-    font-size: 14px;
-  }
-
-  button {
-    width: 100%;
-    margin-top: 20px;
-    padding: 12px;
-    background-color: #1f6feb;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  #message {
-    margin-top: 12px;
-    font-size: 13px;
-    color: #d14343;
-    min-height: 18px;
-  }
-
-  footer {
-    margin-top: 24px;
-    font-size: 12px;
-    color: #6b7280;
-    text-align: center;
-  }
+  body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #e8f2ff; margin: 0; }
+  .container { background: #fff; padding: 24px 36px; border-radius: 12px; width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  h2 { margin: 0 0 12px 0; color: #1f6feb; }
+  label { display: block; margin-top: 12px; font-size: 14px; }
+  input { width: 100%; padding: 10px; margin-top: 6px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
+  button { width: 100%; padding: 12px; margin-top: 20px; background: #1f6feb; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+  #message { margin-top: 12px; font-size: 13px; min-height: 18px; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>Smart Cottage System</h1>
-  <p class="sub">Innovation at the Heart of Home</p>
-
+  <h2>Smart Cottage Login</h2>
   <form id="loginForm">
     <label for="name">Name</label>
     <input type="text" id="name" required placeholder="Enter your full name">
 
     <label for="employee_id">Employee ID</label>
-    <input type="text" id="employee_id" required placeholder="Enter your Employee ID">
+    <input type="text" id="employee_id" required placeholder="Enter Employee ID">
 
     <button type="submit">Login</button>
     <div id="message"></div>
   </form>
-
-  <footer>© Smart Cottage 2026</footer>
 </div>
 
-  <script>
+<script>
 const form = document.getElementById("loginForm");
 const message = document.getElementById("message");
 
-// Palitan ito ng deployed mobile backend URL mo sa Render
+// 🔹 Palitan ito ng deployed mobile backend URL
 const MOBILE_BACKEND_URL = "https://smart-cottage-mobile.onrender.com";
 
 form.addEventListener("submit", async (e) => {
@@ -119,7 +49,6 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    // 🔹 POST sa mobile backend /api/login
     const res = await fetch(`${MOBILE_BACKEND_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -130,14 +59,15 @@ form.addEventListener("submit", async (e) => {
 
     if (res.ok && json.success) {
       message.style.color = "green";
-      message.textContent = "Login successful! Redirecting…";
+      message.textContent = "Login successful!";
 
-      // 🔹 Save user info sa local storage para magamit sa dashboard
+      // 🔹 Save user info locally
       localStorage.setItem("user", JSON.stringify(json.user));
 
+      // 🔹 Redirect to main dashboard page
       setTimeout(() => {
-        window.location.href = "/main.html"; // main dashboard page
-      }, 1000);
+        window.location.href = "/main.html";
+      }, 800);
     } else {
       message.style.color = "#d14343";
       message.textContent = json.message || "Invalid credentials";
@@ -149,7 +79,6 @@ form.addEventListener("submit", async (e) => {
   }
 });
 </script>
-
 
 </body>
 </html>
