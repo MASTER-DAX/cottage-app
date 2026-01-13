@@ -100,9 +100,12 @@
   <footer>© Smart Cottage 2026</footer>
 </div>
 
-<script>
+  <script>
 const form = document.getElementById("loginForm");
 const message = document.getElementById("message");
+
+// Palitan ito ng deployed mobile backend URL mo sa Render
+const MOBILE_BACKEND_URL = "https://smart-cottage-mobile.onrender.com";
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -116,7 +119,8 @@ form.addEventListener("submit", async (e) => {
   };
 
   try {
-    const res = await fetch("/api/login_user", {
+    // 🔹 POST sa mobile backend /api/login
+    const res = await fetch(`${MOBILE_BACKEND_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -127,6 +131,9 @@ form.addEventListener("submit", async (e) => {
     if (res.ok && json.success) {
       message.style.color = "green";
       message.textContent = "Login successful! Redirecting…";
+
+      // 🔹 Save user info sa local storage para magamit sa dashboard
+      localStorage.setItem("user", JSON.stringify(json.user));
 
       setTimeout(() => {
         window.location.href = "/main.html"; // main dashboard page
@@ -142,6 +149,7 @@ form.addEventListener("submit", async (e) => {
   }
 });
 </script>
+
 
 </body>
 </html>
