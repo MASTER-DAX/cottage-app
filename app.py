@@ -1,6 +1,10 @@
 from flask import Flask, jsonify, request, Response, render_template
 from flask_cors import CORS
 import threading
+import requests
+
+WEB_AUTH_URL = "https://rfid-database.onrender.com/api/login_user"
+
 
 app = Flask(__name__)
 CORS(app)
@@ -107,6 +111,37 @@ def poll():
 # ===============================
 # STATUS UPDATE FROM DEVICE
 # ===============================
+
+@app.route("/api/login", methods=["POST"])
+def mobile_login():
+    data = request.json or {}
+    name = data.get("name")
+    employee_id = data.get("employee_id")
+
+    if not name or not employee_id:
+        return jsonify({"success": False, "message": "Missing credentials"}), 400
+
+    try:
+        resp = requests.post(
+            WEB_AUTH_URL,
+            json={"name": name, "employee_id": employee_id},
+            timeout=5
+        )
+    except requests.exceptions.RequestException:
+        return jsonify({"success": False, "message": "Auth server unreachable"}), 503
+
+    if resp.status_code != 200:
+        return jsonify({"success": False, "message": "Invalid login"}), 401
+
+    data = resp.json()
+    if not data.get("success"):
+        return jsonify(data), 401
+
+    return jsonify({
+        "success": True,
+        "user": data["user"]
+    })
+
 @app.route("/api/status", methods=["POST"])
 def post_status():
     data = request.json or {}
