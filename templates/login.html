@@ -66,45 +66,45 @@
 <script>
 const MOBILE_BACKEND_URL = "https://cottage-app.onrender.com/api/login";
 
+async function login() {
+  const name = document.getElementById("name").value.trim();
+  const employee_id = document.getElementById("employee_id").value.trim();
+  const result = document.getElementById("result");
 
+  result.style.color = "black";
+  result.innerHTML = "Logging in...";
 
-  async function login() {
-    const name = document.getElementById("name").value.trim();
-    const employee_id = document.getElementById("employee_id").value.trim();
-    const result = document.getElementById("result");
+  try {
+    const res = await fetch(MOBILE_BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, employee_id })
+    });
 
-    result.innerHTML = "Logging in...";
+    const data = await res.json();
 
-    try {
-      const res = await fetch(MOBILE_BACKEND_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ name, employee_id })
-      });
-
-      const data = await res.json();
-
-      if (!data.success) {
-        result.innerHTML = "❌ " + data.message;
-        result.style.color = "red";
-        return;
-      }
-
-      result.style.color = "green";
-      result.innerHTML = `
-        ✅ Login Success<br>
-        <b>Name:</b> ${data.user.name}<br>
-        <b>Employee ID:</b> ${data.user.employee_id}<br>
-        <b>Access:</b> ${data.user.access_level}<br>
-        <b>Cottage:</b> ${data.user.cottage}
-      `;
-    } catch (err) {
+    if (!data.success) {
       result.style.color = "red";
-      result.innerHTML = "❌ Server error";
+      result.innerHTML = "❌ " + data.message;
+      return;
     }
+
+    // Save user info in localStorage so dashboard can access it
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    result.style.color = "green";
+    result.innerHTML = "✅ Login Successful! Redirecting...";
+
+    // Redirect to dashboard after 1 second
+    setTimeout(() => {
+      window.location.href = "main.html"; // <-- change this to your dashboard URL
+    }, 1000);
+
+  } catch (err) {
+    result.style.color = "red";
+    result.innerHTML = "❌ Server error";
   }
+}
 </script>
 
 </body>
