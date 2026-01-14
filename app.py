@@ -69,7 +69,8 @@ def action_to_state(action):
 # ===============================
 @app.route("/")
 def index():
-    return render_template("login.html")
+    return send_from_directory(app.static_folder, "login.html")
+
 
 # ===============================
 # DEVICE CONTROL
