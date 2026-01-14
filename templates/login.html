@@ -102,17 +102,9 @@
           return;
         }
 
-        result.style.color = "green";
-        result.innerHTML = `
-          ✅ Login Success<br>
-          <b>Name:</b> ${data.user.name}<br>
-          <b>Employee ID:</b> ${data.user.employee_id}<br>
-          <b>Access:</b> ${data.user.access_level}<br>
-          <b>Cottage:</b> ${data.user.cottage}
-        `;
 
         // OPTIONAL: redirect after login
-          window.location.href = "dashboard.html";
+          window.location.href = "main.html";
 
       } catch (err) {
         result.style.color = "red";
