@@ -71,6 +71,12 @@ async function login() {
   const employee_id = document.getElementById("employee_id").value.trim();
   const result = document.getElementById("result");
 
+  if (!name || !employee_id) {
+    result.style.color = "red";
+    result.innerHTML = "❌ Please enter both Name and Employee ID";
+    return;
+  }
+
   result.style.color = "black";
   result.innerHTML = "Logging in...";
 
@@ -89,20 +95,22 @@ async function login() {
       return;
     }
 
-    // Save user info in localStorage so dashboard can access it
+    // Save user info for dashboard
     localStorage.setItem("user", JSON.stringify(data.user));
 
+    // Show success message
     result.style.color = "green";
     result.innerHTML = "✅ Login Successful! Redirecting...";
 
-    // Redirect to dashboard after 1 second
+    // Redirect to your existing dashboard page (replace URL below)
     setTimeout(() => {
-      window.location.href = "main.html"; // <-- change this to your dashboard URL
+      window.location.href = "dashboard.html"; // <-- change to your dashboard URL
     }, 1000);
 
   } catch (err) {
     result.style.color = "red";
     result.innerHTML = "❌ Server error";
+    console.error(err);
   }
 }
 </script>
