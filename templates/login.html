@@ -2,85 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mobile App Login</title>
+  <title>Cottage Kit Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin: 0;
       height: 100vh;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #111 0%, #000 65%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #eaeaea;
     }
 
-    .login-box {
-      background: #fff;
-      padding: 25px;
+    /* GLASS BOX */
+    .glass-box {
       width: 320px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px 25px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(47, 222, 210, 0.25);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      text-align: center;
     }
 
-    h2 {
-      text-align: center;
+    /* LOGO */
+    .logo-box {
+      border: 1px solid #2fded2;
+      padding: 18px;
+      display: inline-block;
       margin-bottom: 20px;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    .logo-box h1 {
+      margin: 0;
+      font-size: 40px;
+      color: #2fded2;
+      letter-spacing: 2px;
     }
 
+    .logo-box span {
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: #2fded2;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-weight: normal;
+      letter-spacing: 1px;
+    }
+
+    /* INPUTS */
+    .input-group {
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-size: 11px;
+      color: #aaa;
+      letter-spacing: 1px;
+    }
+
+    .input-group input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #555;
+      padding: 10px 0;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .input-group input::placeholder {
+      color: #666;
+    }
+
+    .input-group input:focus {
+      border-bottom-color: #2fded2;
+    }
+
+    /* BUTTON */
     button {
       width: 100%;
-      padding: 10px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #2fded2;
+      color: #2fded2;
+      font-size: 14px;
+      letter-spacing: 1px;
       cursor: pointer;
+      transition: 0.3s;
+      border-radius: 6px;
+      margin-top: 10px;
     }
 
     button:hover {
-      background: #0056b3;
+      background: #2fded2;
+      color: #000;
     }
 
     .result {
       margin-top: 15px;
-      font-size: 14px;
+      font-size: 13px;
       text-align: center;
+    }
+
+    footer {
+      margin-top: 35px;
+      font-size: 11px;
+      color: #666;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="login-box">
-    <h2>Login</h2>
+  <div class="glass-box">
 
-    <input type="text" id="name" placeholder="Name" />
-    <input type="text" id="employee_id" placeholder="Employee ID" />
+    <div class="logo-box">
+      <h1>CK</h1>
+      <span>COTTAGE KIT</span>
+    </div>
 
-    <button onclick="login()">Login</button>
+    <h2>LOGIN</h2>
+
+    <div class="input-group">
+      <label>NAME</label>
+      <input type="text" id="name" placeholder="Enter your name">
+    </div>
+
+    <div class="input-group">
+      <label>EMPLOYEE ID</label>
+      <input type="text" id="employee_id" placeholder="Enter your ID">
+    </div>
+
+    <button onclick="login()">SIGN IN</button>
 
     <div class="result" id="result"></div>
+
+    <footer>
+      © CottageKit 2025 | Dax Deniega
+    </footer>
+
   </div>
 
   <script>
     const MOBILE_BACKEND_URL = "https://cottage-app.onrender.com/api/login";
-
 
     async function login() {
       const name = document.getElementById("name").value.trim();
       const employee_id = document.getElementById("employee_id").value.trim();
       const result = document.getElementById("result");
 
-      result.innerHTML = "Logging in...";
+      result.style.color = "#aaa";
+      result.innerHTML = "Signing in...";
 
       try {
         const res = await fetch(MOBILE_BACKEND_URL, {
@@ -88,10 +170,7 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            name: name,
-            employee_id: employee_id
-          })
+          body: JSON.stringify({ name, employee_id })
         });
 
         const data = await res.json();
@@ -102,9 +181,7 @@
           return;
         }
 
-
-        // OPTIONAL: redirect after login
-          window.location.href = "/main";
+        window.location.href = "/main";
 
       } catch (err) {
         result.style.color = "red";
