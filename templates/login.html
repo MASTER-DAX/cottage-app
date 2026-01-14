@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Mobile App Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,6 +14,7 @@
       justify-content: center;
       height: 100vh;
     }
+
     .login-box {
       background: #fff;
       padding: 25px;
@@ -20,10 +22,12 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+
     h2 {
       text-align: center;
       margin-bottom: 20px;
     }
+
     input {
       width: 100%;
       padding: 10px;
@@ -31,6 +35,7 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+
     button {
       width: 100%;
       padding: 10px;
@@ -40,9 +45,11 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     button:hover {
       background: #0056b3;
     }
+
     .result {
       margin-top: 15px;
       font-size: 14px;
@@ -50,70 +57,69 @@
     }
   </style>
 </head>
+
 <body>
 
-<div class="login-box">
-  <h2>Login</h2>
+  <div class="login-box">
+    <h2>Login</h2>
 
-  <input type="text" id="name" placeholder="Name" />
-  <input type="text" id="employee_id" placeholder="Employee ID" />
+    <input type="text" id="name" placeholder="Name" />
+    <input type="text" id="employee_id" placeholder="Employee ID" />
 
-  <button onclick="login()">Login</button>
+    <button onclick="login()">Login</button>
 
-  <div class="result" id="result"></div>
-</div>
+    <div class="result" id="result"></div>
+  </div>
 
-<script>
-const MOBILE_BACKEND_URL = "https://cottage-app.onrender.com/api/login";
+  <script>
+    const MOBILE_BACKEND_URL =
+      "https://cottage-app.onrender.com/api/login_user";
 
-async function login() {
-  const name = document.getElementById("name").value.trim();
-  const employee_id = document.getElementById("employee_id").value.trim();
-  const result = document.getElementById("result");
+    async function login() {
+      const name = document.getElementById("name").value.trim();
+      const employee_id = document.getElementById("employee_id").value.trim();
+      const result = document.getElementById("result");
 
-  if (!name || !employee_id) {
-    result.style.color = "red";
-    result.innerHTML = "❌ Please enter both Name and Employee ID";
-    return;
-  }
+      result.innerHTML = "Logging in...";
 
-  result.style.color = "black";
-  result.innerHTML = "Logging in...";
+      try {
+        const res = await fetch(MOBILE_BACKEND_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: name,
+            employee_id: employee_id
+          })
+        });
 
-  try {
-    const res = await fetch(MOBILE_BACKEND_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, employee_id })
-    });
+        const data = await res.json();
 
-    const data = await res.json();
+        if (!data.success) {
+          result.style.color = "red";
+          result.innerHTML = "❌ " + data.message;
+          return;
+        }
 
-    if (!data.success) {
-      result.style.color = "red";
-      result.innerHTML = "❌ " + data.message;
-      return;
+        result.style.color = "green";
+        result.innerHTML = `
+          ✅ Login Success<br>
+          <b>Name:</b> ${data.user.name}<br>
+          <b>Employee ID:</b> ${data.user.employee_id}<br>
+          <b>Access:</b> ${data.user.access_level}<br>
+          <b>Cottage:</b> ${data.user.cottage}
+        `;
+
+        // OPTIONAL: redirect after login
+        // window.location.href = "dashboard.html";
+
+      } catch (err) {
+        result.style.color = "red";
+        result.innerHTML = "❌ Server error";
+      }
     }
-
-    // Save user info for dashboard
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    // Show success message
-    result.style.color = "green";
-    result.innerHTML = "✅ Login Successful! Redirecting...";
-
-    // Redirect to your existing dashboard page (replace URL below)
-    setTimeout(() => {
-      window.location.href = "dashboard.html"; // <-- change to your dashboard URL
-    }, 1000);
-
-  } catch (err) {
-    result.style.color = "red";
-    result.innerHTML = "❌ Server error";
-    console.error(err);
-  }
-}
-</script>
+  </script>
 
 </body>
 </html>
