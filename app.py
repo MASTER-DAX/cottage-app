@@ -68,9 +68,15 @@ def action_to_state(action):
 # FRONTEND
 # ===============================
 @app.route("/")
-def index():
+def login_page():
+    """ Login Page """
     return render_template("login.html")
 
+
+@app.route("/main")
+def main_page():
+    """ Main Dashboard Page """
+    return render_template("main.html")
 # ===============================
 # DEVICE CONTROL
 # ===============================
