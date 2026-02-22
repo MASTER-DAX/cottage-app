@@ -2,9 +2,12 @@ from flask import Flask, jsonify, request, Response, render_template
 from flask_cors import CORS
 import threading
 import requests
+import os
 
+# ===============================
+# CONFIG
+# ===============================
 WEB_AUTH_URL = "https://rfid-database.onrender.com/api/login_user"
-
 
 app = Flask(__name__)
 CORS(app)
@@ -21,16 +24,18 @@ status_lock = threading.Lock()
 DEFAULT_DEVICE_ID = "esp32_1"
 
 # ===============================
-# COMMAND MAP
+# COMMAND MAP (ESP32 commands)
 # ===============================
 CMD_MAP = {
     ("front_light", "on"): "1",
     ("front_light", "off"): "2",
+
     ("bed_light", "on"): "3",
     ("bed_light", "off"): "4",
 
     ("front_fan", "on"): "5",
     ("front_fan", "off"): "6",
+
     ("bed_fan", "on"): "7",
     ("bed_fan", "off"): "8",
 
@@ -42,6 +47,7 @@ CMD_MAP = {
 
     ("front_door", "unlock"): "D",
     ("front_door", "lock"): "E",
+
     ("bed_door", "unlock"): "F",
     ("bed_door", "lock"): "G",
 }
@@ -53,36 +59,37 @@ def queue_command(device_id, cmd):
     with queues_lock:
         command_queues.setdefault(device_id, []).append(cmd)
 
+
 def action_to_state(action):
-    if action == "on":
-        return "ON"
-    if action == "off":
-        return "OFF"
-    if action == "lock":
-        return "LOCKED"
-    if action == "unlock":
-        return "UNLOCKED"
-    return action.upper()
+    mapping = {
+        "on": "ON",
+        "off": "OFF",
+        "lock": "LOCKED",
+        "unlock": "UNLOCKED",
+    }
+    return mapping.get(action, action.upper())
+
 
 # ===============================
-# FRONTEND
+# FRONTEND ROUTES
 # ===============================
 @app.route("/")
 def login_page():
-    """ Login Page """
     return render_template("login.html")
 
 
 @app.route("/main")
 def main_page():
-    """ Main Dashboard Page """
     return render_template("main.html")
+
+
 # ===============================
-# DEVICE CONTROL
+# DEVICE CONTROL (dashboard → ESP32)
 # ===============================
 @app.route("/device/<device>", methods=["POST"])
 def control_device(device):
-    data = request.json or {}
+    data = request.get_json(silent=True) or {}
+
     action = data.get("action", "").lower()
     device_id = data.get("device_id", DEFAULT_DEVICE_ID)
 
@@ -91,6 +98,7 @@ def control_device(device):
         return jsonify({"error": "Invalid command"}), 400
 
     cmd = CMD_MAP[key]
+
     queue_command(device_id, cmd)
 
     with status_lock:
@@ -102,25 +110,29 @@ def control_device(device):
         "state": action_to_state(action)
     })
 
+
 # ===============================
-# ESP32 POLL
+# ESP32 POLLING (ESP32 → server)
 # ===============================
 @app.route("/api/poll")
 def poll():
     device_id = request.args.get("device_id", DEFAULT_DEVICE_ID)
+
     with queues_lock:
         q = command_queues.get(device_id, [])
         if q:
             return Response(q.pop(0), mimetype="text/plain")
+
     return Response("", mimetype="text/plain")
 
-# ===============================
-# STATUS UPDATE FROM DEVICE
-# ===============================
 
+# ===============================
+# MOBILE LOGIN (proxy auth server)
+# ===============================
 @app.route("/api/login", methods=["POST"])
 def mobile_login():
-    data = request.json or {}
+    data = request.get_json(silent=True) or {}
+
     name = data.get("name")
     employee_id = data.get("employee_id")
 
@@ -139,18 +151,16 @@ def mobile_login():
     if resp.status_code != 200:
         return jsonify({"success": False, "message": "Invalid login"}), 401
 
-    data = resp.json()
-    if not data.get("success"):
-        return jsonify(data), 401
+    return jsonify(resp.json())
 
-    return jsonify({
-        "success": True,
-        "user": data["user"]
-    })
 
+# ===============================
+# DEVICE STATUS UPDATE (ESP32 → server)
+# ===============================
 @app.route("/api/status", methods=["POST"])
 def post_status():
-    data = request.json or {}
+    data = request.get_json(silent=True) or {}
+
     device_id = data.get("device_id", DEFAULT_DEVICE_ID)
     status = data.get("status", {})
 
@@ -159,15 +169,23 @@ def post_status():
 
     return jsonify({"ok": True})
 
+
+# ===============================
+# GET STATUS (dashboard → server)
+# ===============================
 @app.route("/api/status", methods=["GET"])
 def get_status():
     device_id = request.args.get("device_id", DEFAULT_DEVICE_ID)
+
     with status_lock:
-        return jsonify({"status": device_status.get(device_id, {})})
+        return jsonify({
+            "status": device_status.get(device_id, {})
+        })
+
 
 # ===============================
-# LOCAL RUN
+# LOCAL RUN ONLY (NOT USED IN RENDER)
 # ===============================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
-
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
