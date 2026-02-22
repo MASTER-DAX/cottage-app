@@ -24,7 +24,7 @@ status_lock = threading.Lock()
 DEFAULT_DEVICE_ID = "esp32_1"
 
 # ===============================
-# COMMAND MAP (ESP32 commands)
+# COMMAND MAP
 # ===============================
 CMD_MAP = {
     ("front_light", "on"): "1",
@@ -65,13 +65,13 @@ def action_to_state(action):
         "on": "ON",
         "off": "OFF",
         "lock": "LOCKED",
-        "unlock": "UNLOCKED",
+        "unlock": "UNLOCKED"
     }
     return mapping.get(action, action.upper())
 
 
 # ===============================
-# FRONTEND ROUTES
+# FRONTEND
 # ===============================
 @app.route("/")
 def login_page():
@@ -84,7 +84,7 @@ def main_page():
 
 
 # ===============================
-# DEVICE CONTROL (dashboard → ESP32)
+# DEVICE CONTROL (Dashboard → ESP32)
 # ===============================
 @app.route("/device/<device>", methods=["POST"])
 def control_device(device):
@@ -98,7 +98,6 @@ def control_device(device):
         return jsonify({"error": "Invalid command"}), 400
 
     cmd = CMD_MAP[key]
-
     queue_command(device_id, cmd)
 
     with status_lock:
@@ -112,7 +111,7 @@ def control_device(device):
 
 
 # ===============================
-# ESP32 POLLING (ESP32 → server)
+# ESP32 POLL (ESP32 → server)
 # ===============================
 @app.route("/api/poll")
 def poll():
@@ -155,7 +154,7 @@ def mobile_login():
 
 
 # ===============================
-# DEVICE STATUS UPDATE (ESP32 → server)
+# DEVICE STATUS UPDATE
 # ===============================
 @app.route("/api/status", methods=["POST"])
 def post_status():
@@ -170,21 +169,16 @@ def post_status():
     return jsonify({"ok": True})
 
 
-# ===============================
-# GET STATUS (dashboard → server)
-# ===============================
 @app.route("/api/status", methods=["GET"])
 def get_status():
     device_id = request.args.get("device_id", DEFAULT_DEVICE_ID)
 
     with status_lock:
-        return jsonify({
-            "status": device_status.get(device_id, {})
-        })
+        return jsonify({"status": device_status.get(device_id, {})})
 
 
 # ===============================
-# LOCAL RUN ONLY (NOT USED IN RENDER)
+# LOCAL RUN ONLY (for testing)
 # ===============================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
