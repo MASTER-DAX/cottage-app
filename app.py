@@ -13,15 +13,18 @@ app = Flask(__name__)
 CORS(app)
 
 # ===============================
-# GLOBAL ONE-SHOT COMMAND (ALEXA STYLE)
+# DATA STORAGE
 # ===============================
-last_command = "0"
-command_lock = threading.Lock()
+command_queues = {}
+device_status = {}
+
+queues_lock = threading.Lock()
+status_lock = threading.Lock()
 
 DEFAULT_DEVICE_ID = "esp32_1"
 
 # ===============================
-# COMMAND MAP (UNCHANGED)
+# COMMAND MAP
 # ===============================
 CMD_MAP = {
     ("front_light", "on"): "1",
@@ -50,8 +53,13 @@ CMD_MAP = {
 }
 
 # ===============================
-# HELPERS (UNCHANGED)
+# HELPERS
 # ===============================
+def queue_command(device_id, cmd):
+    with queues_lock:
+        command_queues.setdefault(device_id, []).append(cmd)
+
+
 def action_to_state(action):
     mapping = {
         "on": "ON",
@@ -61,8 +69,9 @@ def action_to_state(action):
     }
     return mapping.get(action, action.upper())
 
+
 # ===============================
-# FRONTEND PAGES (UNCHANGED)
+# FRONTEND
 # ===============================
 @app.route("/")
 def login_page():
@@ -73,44 +82,51 @@ def login_page():
 def main_page():
     return render_template("main.html")
 
+
 # ===============================
-# MOBILE DASHBOARD → SEND COMMAND
+# DEVICE CONTROL (Dashboard → ESP32)
 # ===============================
 @app.route("/device/<device>", methods=["POST"])
 def control_device(device):
-    global last_command
-
     data = request.get_json(silent=True) or {}
+
     action = data.get("action", "").lower()
+    device_id = data.get("device_id", DEFAULT_DEVICE_ID)
 
     key = (device, action)
     if key not in CMD_MAP:
         return jsonify({"error": "Invalid command"}), 400
 
-    with command_lock:
-        last_command = CMD_MAP[key]
+    cmd = CMD_MAP[key]
+    queue_command(device_id, cmd)
+
+    with status_lock:
+        device_status.setdefault(device_id, {})[device] = action_to_state(action)
 
     return jsonify({
-        "sent": last_command,
+        "queued": cmd,
         "device": device,
         "state": action_to_state(action)
     })
 
+
 # ===============================
-# ESP32 POLL (ONE-SHOT, ALEXA STYLE)
+# ESP32 POLL (ESP32 → server)
 # ===============================
-@app.route("/api/poll", methods=["GET"])
+@app.route("/api/poll")
 def poll():
-    global last_command
+    device_id = request.args.get("device_id", DEFAULT_DEVICE_ID)
 
-    with command_lock:
-        cmd = last_command
-        last_command = "0"   # AUTO RESET
+    with queues_lock:
+        q = command_queues.get(device_id, [])
+        if q:
+            return Response(q.pop(0), mimetype="text/plain")
 
-    return Response(cmd, mimetype="text/plain")
+    return Response("", mimetype="text/plain")
+
 
 # ===============================
-# MOBILE LOGIN (UNCHANGED)
+# MOBILE LOGIN (proxy auth server)
 # ===============================
 @app.route("/api/login", methods=["POST"])
 def mobile_login():
@@ -136,12 +152,10 @@ def mobile_login():
 
     return jsonify(resp.json())
 
-# ===============================
-# DEVICE STATUS UPDATE (UNCHANGED)
-# ===============================
-device_status = {}
-status_lock = threading.Lock()
 
+# ===============================
+# DEVICE STATUS UPDATE
+# ===============================
 @app.route("/api/status", methods=["POST"])
 def post_status():
     data = request.get_json(silent=True) or {}
@@ -162,9 +176,11 @@ def get_status():
     with status_lock:
         return jsonify({"status": device_status.get(device_id, {})})
 
+
 # ===============================
-# LOCAL RUN
+# LOCAL RUN ONLY (for testing)
 # ===============================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+
