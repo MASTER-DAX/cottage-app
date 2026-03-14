@@ -4,6 +4,8 @@ import threading
 import requests
 import os
 
+from db import update_device_status, get_device_status, update_many_status
+
 # ===============================
 # CONFIG
 # ===============================
@@ -88,25 +90,35 @@ def main_page():
 # ===============================
 @app.route("/device/<device>", methods=["POST"])
 def control_device(device):
+
     data = request.get_json(silent=True) or {}
 
     action = data.get("action", "").lower()
     device_id = data.get("device_id", DEFAULT_DEVICE_ID)
 
     key = (device, action)
+
     if key not in CMD_MAP:
         return jsonify({"error": "Invalid command"}), 400
 
     cmd = CMD_MAP[key]
+
+    # queue command for ESP32
     queue_command(device_id, cmd)
 
+    state = action_to_state(action)
+
+    # save to MongoDB
+    update_device_status(device_id, device, state)
+
+    # update RAM cache
     with status_lock:
-        device_status.setdefault(device_id, {})[device] = action_to_state(action)
+        device_status.setdefault(device_id, {})[device] = state
 
     return jsonify({
         "queued": cmd,
         "device": device,
-        "state": action_to_state(action)
+        "state": state
     })
 
 
@@ -115,10 +127,12 @@ def control_device(device):
 # ===============================
 @app.route("/api/poll")
 def poll():
+
     device_id = request.args.get("device_id", DEFAULT_DEVICE_ID)
 
     with queues_lock:
         q = command_queues.get(device_id, [])
+
         if q:
             return Response(q.pop(0), mimetype="text/plain")
 
@@ -130,6 +144,7 @@ def poll():
 # ===============================
 @app.route("/api/login", methods=["POST"])
 def mobile_login():
+
     data = request.get_json(silent=True) or {}
 
     name = data.get("name")
@@ -139,11 +154,13 @@ def mobile_login():
         return jsonify({"success": False, "message": "Missing credentials"}), 400
 
     try:
+
         resp = requests.post(
             WEB_AUTH_URL,
             json={"name": name, "employee_id": employee_id},
             timeout=5
         )
+
     except requests.exceptions.RequestException:
         return jsonify({"success": False, "message": "Auth server unreachable"}), 503
 
@@ -154,33 +171,49 @@ def mobile_login():
 
 
 # ===============================
-# DEVICE STATUS UPDATE
+# DEVICE STATUS UPDATE (ESP32 → server)
 # ===============================
 @app.route("/api/status", methods=["POST"])
 def post_status():
+
     data = request.get_json(silent=True) or {}
 
     device_id = data.get("device_id", DEFAULT_DEVICE_ID)
     status = data.get("status", {})
 
+    # save to MongoDB
+    update_many_status(device_id, status)
+
+    # update RAM cache
     with status_lock:
         device_status.setdefault(device_id, {}).update(status)
 
     return jsonify({"ok": True})
 
 
+# ===============================
+# GET DEVICE STATUS (Dashboard)
+# ===============================
 @app.route("/api/status", methods=["GET"])
 def get_status():
+
     device_id = request.args.get("device_id", DEFAULT_DEVICE_ID)
 
-    with status_lock:
-        return jsonify({"status": device_status.get(device_id, {})})
+    # get from MongoDB
+    status = get_device_status(device_id)
+
+    return jsonify({"status": status})
 
 
 # ===============================
-# LOCAL RUN ONLY (for testing)
+# LOCAL RUN ONLY
 # ===============================
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
 
+    port = int(os.environ.get("PORT", 5000))
+
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=True
+    )
