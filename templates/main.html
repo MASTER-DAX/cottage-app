@@ -229,18 +229,28 @@ body {
 }
 
 .sidebar {
+  position: fixed;
+  left: 0;
+  top: 60px;
+  height: calc(100vh - 60px);
   width: 260px;
-  background: #1e222e;  /* Dark sidebar */
+
+  background: #1e222e;
   color: #ffffff;
+
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-radius: 0; /* remove rounded edges */
-  transition: 0.3s ease;
-  position: relative; /* for ripple */
-  overflow: hidden;   /* contain ripple */
+
+  border-radius: 0;
+  overflow: hidden;
   cursor: pointer;
+
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+
+  z-index: 1000;
 }
 
 .sidebar.hidden {
@@ -250,6 +260,10 @@ body {
   overflow: hidden;
 }
 
+.sidebar.show {
+  transform: translateX(0);
+}
+    
 .logo-box {
   display: flex;
   align-items: center;
