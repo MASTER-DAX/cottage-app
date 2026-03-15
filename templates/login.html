@@ -176,12 +176,15 @@
         const data = await res.json();
 
         if (!data.success) {
-          result.style.color = "red";
-          result.innerHTML = "❌ " + data.message;
-          return;
-        }
+  result.style.color = "red";
+  result.innerHTML = "❌ " + data.message;
+  return;
+}
 
-        window.location.href = "/main";
+// SAVE USER NAME
+localStorage.setItem("ck_user_name", name);
+
+window.location.href = "/main";
 
       } catch (err) {
         result.style.color = "red";
