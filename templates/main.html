@@ -441,32 +441,33 @@ body {
   bottom:20px;
   left:0;
   width:100%;
-  padding:10px;
-  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
 }
 
 .user-box{
+  width:85%;
   border:1px solid #2fded2;
   padding:10px;
-  margin-bottom:10px;
   text-align:center;
   border-radius:8px;
-  color:#2fded2;
-  font-size:14px;
 }
 
 .logout-btn{
-  width:100%;
+  width:85%;
   padding:10px;
-  border:none;
+  background:transparent;
+  border:1px solid #2fded2;
+  color:#2fded2;
   border-radius:8px;
-  background:#ff4d4d;
-  color:white;
   cursor:pointer;
 }
 
 .logout-btn:hover{
-  background:#ff2a2a;
+  background:#2fded2;
+  color:#000;
 }
 
   </style>
