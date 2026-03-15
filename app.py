@@ -75,6 +75,12 @@ def action_to_state(action):
 # ===============================
 # FRONTEND
 # ===============================
+
+@app.route("/ping")
+def ping():
+    return "alive"
+
+
 @app.route("/")
 def login_page():
     return render_template("login.html")
