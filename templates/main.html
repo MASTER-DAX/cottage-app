@@ -581,11 +581,7 @@ const burgerBtn = document.getElementById("burgerBtn");
 const sidebar = document.getElementById("sidebar");
 
 burgerBtn.addEventListener("click", () => {
-  if (window.innerWidth <= 720) {
-    sidebar.classList.toggle("show");
-  } else {
-    sidebar.classList.toggle("hidden");
-  }
+  sidebar.classList.toggle("show");
 });
 
 // Sidebar ripple effect on click
