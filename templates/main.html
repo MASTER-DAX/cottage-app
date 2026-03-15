@@ -143,7 +143,7 @@ main {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  
+  transition: background 0.4s ease;
 }
 
 /* PAGE SWITCH BUTTONS */
@@ -177,7 +177,6 @@ main {
 * {
   box-sizing: border-box;
   font-family: Verdana, sans-serif;
-  transition: all 0.25s ease;
 }
 
 body {
@@ -468,7 +467,7 @@ body {
     </div>
 
     
-    <main class="main" id="mainContent">
+    <main class="main living-room" id="mainContent">
       <div class="background-blur-overlay"></div>
 
 <footer id="pageFooter">
@@ -624,8 +623,11 @@ sidebar.addEventListener("click", () => {
   const mainContent = document.getElementById("mainContent");
 
  // --- Swipe detection ---
-  let startX = 0;
-  let endX = 0;
+let pageReady = false;
+
+// --- Swipe detection ---
+let startX = 0;
+let endX = 0;
 
   document.addEventListener("touchstart", (e) => {
     startX = e.touches[0].clientX;
@@ -637,18 +639,19 @@ sidebar.addEventListener("click", () => {
   });
 
   function handleSwipe() {
-    const diff = endX - startX;
-    if (Math.abs(diff) < 50) return; // ignore tiny swipes
-    if (diff > 0) {
-      // swipe right → previous page
-      if (mainContent.classList.contains("bed-room")) showLivingRoom();
-      else if (mainContent.classList.contains("two-d-view")) showBedRoom();
-    } else {
-      // swipe left → next page
-      if (mainContent.classList.contains("living-room")) showBedRoom();
-      else if (mainContent.classList.contains("bed-room")) show2DView();
-    }
+  if (!pageReady) return;
+
+  const diff = endX - startX;
+  if (Math.abs(diff) < 50) return;
+
+  if (diff > 0) {
+    if (mainContent.classList.contains("bed-room")) showLivingRoom();
+    else if (mainContent.classList.contains("two-d-view")) showBedRoom();
+  } else {
+    if (mainContent.classList.contains("living-room")) showBedRoom();
+    else if (mainContent.classList.contains("bed-room")) show2DView();
   }
+}
 
   // --- Footer active icon ---
   function setActiveFooter(activeId) {
@@ -800,6 +803,7 @@ sidebar.addEventListener("click", () => {
 
     // DEFAULT PAGE: LIVING ROOM
     showLivingRoom();
+    pageReady = true;
 
     // PAGE SWITCH BUTTONS
     document.getElementById("pageFront").addEventListener("click", showLivingRoom);
