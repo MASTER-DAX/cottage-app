@@ -453,6 +453,28 @@ body {
   text-align:center;
 }
 
+.user-box{
+  width:85%;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  justify-content:center;
+}
+
+.user-avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:2px solid #2fded2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  font-size:14px;
+  color:#2fded2;
+}
+    
 .logout-btn{
   width:85%;
   padding:10px;
@@ -496,9 +518,10 @@ body {
 
         <div class="sidebar-bottom">
 
-  <div class="user-box">
-    <span id="loggedUser">User</span>
-  </div>
+<div class="user-box">
+  <div class="user-avatar" id="userAvatar">U</div>
+  <span id="loggedUser">User</span>
+</div>
 
   <button class="logout-btn" onclick="logout()">
     Logout
@@ -793,6 +816,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.getElementById("loggedUser").textContent = user;
+
+const initials = user
+  .split(" ")
+  .map(n => n[0])
+  .join("")
+  .toUpperCase()
+  .slice(0,2);
+
+document.getElementById("userAvatar").textContent = initials;
 
     // Map DOM ids -> device names (must match backend CMD_MAP keys)
     const mapping = {
