@@ -244,7 +244,7 @@ body {
 
   border-radius: 0;
   overflow: hidden;
-  cursor: pointer;
+  cursor:default;
 
   transform: translateX(-100%);
   transition: transform 0.3s ease;
@@ -319,40 +319,22 @@ body {
 }
 
 .nav-btn {
-  background: none;
+  background: transparent;
   border: none;
   text-align: left;
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   color: #ffffff;
   font-size: 0.95rem;
   cursor: pointer;
   display: flex;
   gap: 10px;
   align-items: center;
+  transition: background 0.2s;
 }
 
-/* RIPPLE EFFECT */
-.sidebar::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255,255,255,0.3);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  pointer-events: none;
-  transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
-}
-
-.sidebar.active-ripple::after {
-  width: 400px;
-  height: 400px;
-  opacity: 1;
-  transition: 0.4s ease;
+.nav-btn:hover {
+  background: rgba(255,255,255,0.08);
 }
 
 .sidebar-footer {
@@ -447,11 +429,6 @@ body {
   gap:10px;
 }
 
-.user-box{
-  width:85%;
-  padding:10px;
-  text-align:center;
-}
 
 .user-box{
   width:85%;
@@ -488,19 +465,24 @@ body {
     
 .logout-btn{
   width:85%;
-  padding:10px;
+  padding:10px 12px;
   background:transparent;
-  border:1px solid #2fded2;
-  color:#2fded2;
+  border:none;
+  color:#ffffff;
   border-radius:8px;
   cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:background 0.2s;
 }
 
 .logout-btn:hover{
-  background:#2fded2;
-  color:#000;
+  background:rgba(255,255,255,0.08);
 }
-
+*{
+-webkit-tap-highlight-color: transparent;
+}
   </style>
 </head>
 <body>
@@ -534,9 +516,12 @@ body {
   <span id="loggedUser">User</span>
 </div>
 
-  <button class="logout-btn" onclick="logout()">
-    Logout
-  </button>
+<button class="logout-btn" onclick="logout()">
+<svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#e3e3e3">
+<path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-56-58 102-102H360v-80h326L584-622l56-58 200 200-200 200Z"/>
+</svg>
+Logout
+</button>
 
 </div>
         
@@ -668,13 +653,7 @@ burgerBtn.addEventListener("click", () => {
   sidebar.classList.toggle("show");
 });
 
-// Sidebar ripple effect on click
-sidebar.addEventListener("click", () => {
-  sidebar.classList.add("active-ripple");
-  setTimeout(() => {
-    sidebar.classList.remove("active-ripple");
-  }, 400); // matches CSS transition duration
-});
+
 
 
 
