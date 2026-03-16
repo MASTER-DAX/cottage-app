@@ -455,24 +455,35 @@ body {
 
 .user-box{
   width:85%;
-  padding:10px;
+  padding:8px 12px;
   display:flex;
   align-items:center;
   gap:10px;
-  justify-content:center;
+
+  border:1px solid #2fded2;
+  border-radius:8px;
+
+  background:transparent;
 }
 
 .user-avatar{
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:2px solid #2fded2;
+  width:32px;
+  height:32px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  border:1px solid #2fded2;
+  border-radius:6px;
+
   font-weight:bold;
-  font-size:14px;
+  font-size:13px;
   color:#2fded2;
+}
+
+.user-box:hover{
+  background:rgba(47,222,210,0.08);
 }
     
 .logout-btn{
@@ -519,7 +530,7 @@ body {
         <div class="sidebar-bottom">
 
 <div class="user-box">
-  <div class="user-avatar" id="userAvatar">U</div>
+  <div class="user-avatar" id="userAvatar">DD</div>
   <span id="loggedUser">User</span>
 </div>
 
