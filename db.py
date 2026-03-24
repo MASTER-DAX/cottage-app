@@ -4,7 +4,7 @@ from pymongo import MongoClient
 # ===============================
 # CONNECT TO MONGODB
 # ===============================
-MONGO_URI = "mongodb+srv://daxdeniega16:136541ASAka@cluster0.u2nctpk.mongodb.net/smart_cottage?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_URI = "mongodb+srv://daxdeniega16:136541asaka@cluster0.u2nctpk.mongodb.net/"
 client = MongoClient(MONGO_URI)
 
 db = client["smart_cottage"]
