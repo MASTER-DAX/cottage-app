@@ -9,7 +9,7 @@ from db import update_device_status, get_device_status, update_many_status
 # ===============================
 # CONFIG
 # ===============================
-WEB_AUTH_URL = "https://rfid-database.onrender.com/api/login_user"
+WEB_AUTH_URL = "https://rfid-database-1.onrender.com/api/login_user"
 
 app = Flask(__name__)
 CORS(app)
