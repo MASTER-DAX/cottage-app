@@ -81,8 +81,12 @@ def ping():
     return "alive"
 
 
+@app.route("/")
+def login_page():
+    return render_template("login.html")
 
-@app.route("main")
+
+@app.route("/main")
 def main_page():
     return render_template("main.html")
 
